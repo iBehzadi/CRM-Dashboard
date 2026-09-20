@@ -77,46 +77,7 @@ const Navbar = ({onMenuClick}) => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
-      {/* {menuOpen && (
-        <div className="fixed top-16 right-0 z-40 w-72 h-[calc(100vh-4rem)] bg-white border-l border-gray-200 shadow-lg lg:hidden">
-          <div className="p-4">
-            <p className="text-sm text-gray-500 mb-4">
-              منوی اصلی
-            </p>
-
-            <ul className="space-y-2">
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                داشبورد
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                سرنخ‌ها
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                مشتریان
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                معاملات
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                وظایف
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                فعالیت‌ها
-              </li>
-
-              <li className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                فروش‌ها
-              </li>
-            </ul>
-          </div>
-        </div>
-      )} */}
+     
     </>
   );
 };
