@@ -41,7 +41,6 @@ const Sidebar = ({ open, onClose }) => {
           h-screen
           w-64
           bg-white
-          border-l
           border-gray-200
           transition-transform
           duration-300
@@ -50,7 +49,7 @@ const Sidebar = ({ open, onClose }) => {
         `}
       >
         {/* Header */}
-        <div className="h-16 px-5 border-b flex items-center justify-between">
+        <div className="h-16 px-5 flex border-b border-gray-200 items-center justify-between">
           <h1 className="text-xl font-bold text-blue-600">CRM</h1>
 
           <button onClick={onClose} className="lg:hidden text-gray-500">

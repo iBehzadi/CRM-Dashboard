@@ -7,12 +7,11 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gray-50 ">
-      <div className="flex">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      </div>
-
+      {/* navbar */}
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+      {/* sidebar */}
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {/* content */}
       <main className="pt-18 px-12 ">
         <Outlet />
       </main>
