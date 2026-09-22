@@ -57,7 +57,9 @@ const Leads = () => {
 
     return matchesSearch && matchesStatus && matchesSource;
   });
-  
+  const handleDelete = (id) => {
+    setLeads((prev) => prev.filter((lead) => lead.id !== id));
+  };
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -260,8 +262,11 @@ const Leads = () => {
                   <td className="px-5 py-4 text-gray-500">{lead.date}</td>
 
                   <td className="px-5 py-4">
-                    <button className="text-gray-500 hover:text-blue-600">
+                    <button className="group relative text-gray-500 hover:text-blue-600">
                       <FiMoreVertical size={20} />
+                      <div className="absolute  bg-gray-200 hidden group-hover:flex justify-center text-sm rounded w-20 h-10 -top-10  items-center">
+                        <button className="text-black" onClick={()=>handleDelete(lead.id)}>حذف</button>
+                      </div>
                     </button>
                   </td>
                 </tr>
