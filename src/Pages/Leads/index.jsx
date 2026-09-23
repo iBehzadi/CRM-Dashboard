@@ -2,6 +2,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { FiPlus, FiSearch, FiMoreVertical, FiX } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 
 const statusStyles = {
@@ -45,28 +47,42 @@ const Leads = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
 
+  const [editingLead, setEditingLead] = useState(null);
+  const handleEdit = (lead) => {
+    setEditingLead(lead);
+
+    formik.setValues({
+      name: lead.name,
+      phone: lead.phone,
+      email: lead.email || "",
+      source: lead.source,
+      status: lead.status,
+      description: lead.description || "",
+    });
+
+    setShowModal(true);
+  };
+
   const filteredLeads = leads.filter((lead) => {
     const matchesSearch =
       lead.name.includes(search) || lead.phone.includes(search);
-
     const matchesStatus =
       statusFilter === "all" || lead.status === statusFilter;
-
     const matchesSource =
       sourceFilter === "all" || lead.source === sourceFilter;
-
     return matchesSearch && matchesStatus && matchesSource;
   });
   const handleDelete = (id) => {
     setLeads((prev) => prev.filter((lead) => lead.id !== id));
   };
+
   const formik = useFormik({
     initialValues: {
       name: "",
       phone: "",
       email: "",
       source: "",
-      status: "جدید",
+      status: "new",
       description: "",
     },
 
@@ -85,19 +101,28 @@ const Leads = () => {
     }),
 
     onSubmit: (values) => {
-      const newLead = {
-        id: Date.now(),
-        name: values.name,
-        phone: values.phone,
-        email: values.email,
-        source: values.source,
-        status: values.status,
-        description: values.description,
-        date: new Date().toLocaleDateString("fa-IR"),
-      };
-      setLeads((prev) => [newLead, ...prev]);
+      if (editingLead) {
+        setLeads((prev) =>
+          prev.map((lead) =>
+            lead.id === editingLead.id
+              ? {
+                  ...lead,
+                  ...values,
+                }
+              : lead,
+          ),
+        );
+      } else {
+        const newLead = {
+          id: Date.now(),
+          ...values,
+          date: new Date().toLocaleDateString("fa-IR"),
+        };
+        setLeads((prev) => [newLead, ...prev]);
+      }
 
       formik.resetForm();
+      setEditingLead(null);
       setShowModal(false);
     },
   });
@@ -198,7 +223,7 @@ const Leads = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl ">
         <div className="overflow-x-auto">
           <table className="w-full min-w-175">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -264,8 +289,19 @@ const Leads = () => {
                   <td className="px-5 py-4">
                     <button className="group relative text-gray-500 hover:text-blue-600">
                       <FiMoreVertical size={20} />
-                      <div className="absolute  bg-gray-200 hidden group-hover:flex justify-center text-sm rounded w-20 h-10 -top-10  items-center">
-                        <button className="text-black" onClick={()=>handleDelete(lead.id)}>حذف</button>
+                      <div className="absolute shadow bg-white invisible h-0 group-hover:visible flex flex-col justify-center text-[12px] rounded w-20 group-hover:h-auto -top-15 py-3 px-2 items-center">
+                        <button
+                          className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
+                          onClick={() => handleDelete(lead.id)}
+                        >
+                          <MdDelete className="text-red-500" /> حذف
+                        </button>
+                        <button
+                          className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
+                          onClick={() => handleEdit(lead)}
+                        >
+                          <FaEdit className="text-green-500"/> ویرایش
+                        </button>
                       </div>
                     </button>
                   </td>
@@ -289,9 +325,7 @@ const Leads = () => {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-blue-400">
               <div>
-                <h2 className="text-lg font-bold text-gray-800">
-                  افزودن سرنخ جدید
-                </h2>
+                <h2>{editingLead ? "ویرایش سرنخ" : "افزودن سرنخ"}</h2>
                 <p className="text-sm text-gray-500 mt-1">
                   اطلاعات مشتری بالقوه را وارد کنید
                 </p>
@@ -452,7 +486,11 @@ const Leads = () => {
                   className="px-5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
                   disabled={formik.isSubmitting}
                 >
-                  {!formik.isSubmitting ? " ذخیره سرنخ" : "درحال ذخیره ..."}
+                  {!formik.isSubmitting
+                    ? editingLead
+                      ? "ذخیره تغییرات"
+                      : "ذخیره سرنخ"
+                    : "درحال ذخیره ..."}
                 </button>
               </div>
             </form>
