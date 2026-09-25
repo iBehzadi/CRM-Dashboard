@@ -10,6 +10,7 @@ import {
   Sales,
   Settings,
 } from "../Pages";
+import LeadDetails from "../Pages/Leads/LeadDetails";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "leads",
         element: <Leads />,
+      },
+      {
+        path: "leads/:id",
+        element: <LeadDetails />,
       },
       {
         path: "customers",
@@ -47,6 +52,7 @@ const router = createBrowserRouter([
         path: "settings",
         element: <Settings />,
       },
+      
     ],
   },
 ]);

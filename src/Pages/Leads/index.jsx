@@ -1,10 +1,11 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
+import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiMoreVertical, FiX } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
+import useLeadStore from "../../Store/leadStore";
 
 const statusStyles = {
   new: "bg-blue-50 text-blue-600",
@@ -23,31 +24,18 @@ const sourceTranslate = {
   advertisement: "تبلیغات",
 };
 const Leads = () => {
-  const [leads, setLeads] = useState([
-    {
-      id: 1,
-      name: "علی رضایی",
-      phone: "09121234567",
-      source: "instagram",
-      status: "new",
-      date: "۱۴۰۵/۶/۲۹",
-    },
-    {
-      id: 2,
-      name: "محمد احمدی",
-      phone: "09129876543",
-      source: "website",
-      status: "Following",
-      date: "۱۴۰۵/۶/۲۱",
-    },
-  ]);
-  const [showModal, setShowModal] = useState(false);
+  const leads = useLeadStore((state) => state.leads);
+  const addLead = useLeadStore((state) => state.addLead);
+  const updateLead = useLeadStore((state) => state.updateLead);
+  const removeLead = useLeadStore((state) => state.removeLead);
 
+  const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
 
   const [editingLead, setEditingLead] = useState(null);
+
   const handleEdit = (lead) => {
     setEditingLead(lead);
 
@@ -72,9 +60,6 @@ const Leads = () => {
       sourceFilter === "all" || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
   });
-  const handleDelete = (id) => {
-    setLeads((prev) => prev.filter((lead) => lead.id !== id));
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -102,23 +87,14 @@ const Leads = () => {
 
     onSubmit: (values) => {
       if (editingLead) {
-        setLeads((prev) =>
-          prev.map((lead) =>
-            lead.id === editingLead.id
-              ? {
-                  ...lead,
-                  ...values,
-                }
-              : lead,
-          ),
-        );
+        updateLead(editingLead.id, values);
       } else {
         const newLead = {
           id: Date.now(),
           ...values,
           date: new Date().toLocaleDateString("fa-IR"),
         };
-        setLeads((prev) => [newLead, ...prev]);
+        addLead(newLead);
       }
 
       formik.resetForm();
@@ -259,7 +235,12 @@ const Leads = () => {
                   className="border-b border-gray-100 hover:bg-gray-50"
                 >
                   <td className="px-5 py-4 font-medium text-gray-800">
-                    {lead.name}
+                    <Link
+                      to={`/leads/${lead.id}`}
+                      className="font-medium text-blue-600 hover:underline"
+                    >
+                      {lead.name}
+                    </Link>
                   </td>
 
                   <td className="px-5 py-4 text-gray-600">{lead.phone}</td>
@@ -290,18 +271,18 @@ const Leads = () => {
                     <button className="group relative text-gray-500 hover:text-blue-600">
                       <FiMoreVertical size={20} />
                       <div className="absolute shadow bg-white invisible h-0 group-hover:visible flex flex-col justify-center text-[12px] rounded w-20 group-hover:h-auto -top-15 py-3 px-2 items-center">
-                        <button
+                        <span
                           className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
-                          onClick={() => handleDelete(lead.id)}
+                          onClick={() => removeLead(lead.id)}
                         >
                           <MdDelete className="text-red-500" /> حذف
-                        </button>
-                        <button
+                        </span>
+                        <span
                           className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
                           onClick={() => handleEdit(lead)}
                         >
-                          <FaEdit className="text-green-500"/> ویرایش
-                        </button>
+                          <FaEdit className="text-green-500" /> ویرایش
+                        </span>
                       </div>
                     </button>
                   </td>
