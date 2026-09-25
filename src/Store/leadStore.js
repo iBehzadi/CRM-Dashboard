@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { notify } from "../utils/notify";
 
 const useLeadStore = create((set) => ({
   leads: [
@@ -18,6 +19,7 @@ const useLeadStore = create((set) => ({
     set((state) => {
       const exist = state.leads.find((item) => item.phone === lead.phone);
       if (exist) {
+        notify("error", "مشتری با این شماره تلفن قبلاً اضافه شده است.");
         return state;
       }
       return {
