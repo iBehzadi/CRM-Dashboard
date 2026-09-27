@@ -476,7 +476,7 @@ const Leads = () => {
               </div>
             </form>
 
-            {/* Footer */}
+            
           </div>
         </div>
       )}

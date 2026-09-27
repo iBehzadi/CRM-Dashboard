@@ -1,18 +1,18 @@
 import { create } from "zustand";
-import { notify } from "../utils/notify";
+import notify from "../Utils/notify";
 
 const useLeadStore = create((set) => ({
   leads: [
-    {
-      id: 1,
-      name: "علی رضایی",
-      phone: "09121234567",
-      source: "instagram",
-      status: "new",
-      email: "ali@example.com",
-      description: "مشتری علاقه‌مند به خدمات طراحی سایت",
-      date: new Date().toLocaleDateString("fa-IR"),
-    },
+    // {
+    //   id: 1,
+    //   name: "علی رضایی",
+    //   phone: "09121234567",
+    //   source: "instagram",
+    //   status: "new",
+    //   email: "ali@example.com",
+    //   description: "مشتری علاقه‌مند به خدمات طراحی سایت",
+    //   date: new Date().toLocaleDateString("fa-IR"),
+    // },
   ],
 
   addLead: (lead) =>
