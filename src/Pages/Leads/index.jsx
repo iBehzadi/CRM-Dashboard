@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiMoreVertical, FiX } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useLeadStore from "../../Store/leadStore";
-
+import fetchData from "../../Utils/fetchData";
 const statusStyles = {
   new: "bg-blue-50 text-blue-600",
   Following: "bg-yellow-50 text-yellow-600",
@@ -14,8 +14,8 @@ const statusStyles = {
 };
 const statusTranslate = {
   new: "جدید",
-  Following: "درحال پیگیری",
-  Negotiation: "مذاکره",
+  following: "درحال پیگیری",
+  negotiation: "مذاکره",
 };
 const sourceTranslate = {
   instagram: "اینستاگرام",
@@ -24,10 +24,12 @@ const sourceTranslate = {
   advertisement: "تبلیغات",
 };
 const Leads = () => {
-  const leads = useLeadStore((state) => state.leads);
-  const addLead = useLeadStore((state) => state.addLead);
+  const createLead = useLeadStore((state) => state.createLead);
   const updateLead = useLeadStore((state) => state.updateLead);
   const removeLead = useLeadStore((state) => state.removeLead);
+  const fetchLeads = useLeadStore((state) => state.fetchLeads);
+  const leads = useLeadStore((state) => state.leads);
+  
 
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -44,7 +46,7 @@ const Leads = () => {
       phone: lead.phone,
       email: lead.email || "",
       source: lead.source,
-      status: lead.status,
+      leadStatus: lead.status,
       description: lead.description || "",
     });
 
@@ -67,7 +69,7 @@ const Leads = () => {
       phone: "",
       email: "",
       source: "",
-      status: "new",
+      leadStatus: "new",
       description: "",
     },
 
@@ -79,27 +81,21 @@ const Leads = () => {
 
       email: Yup.string().email("ایمیل معتبر نیست"),
       source: Yup.string().required("منبع سرنخ را انتخاب کنید"),
-      status: Yup.string().required("وضعیت را انتخاب کنید"),
+      leadStatus: Yup.string().required("وضعیت را انتخاب کنید"),
     }),
 
     onSubmit: (values) => {
-      if (editingLead) {
-        updateLead(editingLead.id, values);
-      } else {
-        const newLead = {
-          id: Date.now(),
-          ...values,
-          date: new Date().toLocaleDateString("fa-IR"),
-        };
-
-        addLead(newLead);
-      }
+      editingLead ? updateLead(editingLead.id, values) : createLead(values);
 
       formik.resetForm();
       setEditingLead(null);
       setShowModal(false);
     },
   });
+
+  useEffect(() => {
+    fetchLeads()
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -422,7 +418,7 @@ const Leads = () => {
 
                   <select
                     name="status"
-                    value={formik.values.status}
+                    value={formik.values.leadStatus}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
@@ -473,8 +469,6 @@ const Leads = () => {
                 </button>
               </div>
             </form>
-
-            
           </div>
         </div>
       )}

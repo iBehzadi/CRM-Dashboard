@@ -31,7 +31,7 @@ const Tasks = () => {
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
+          <table className="w-full min-w-200">
             <thead>
               <tr className="border-b border-gray-200 text-right">
                 <th className="px-5 py-4 text-sm font-medium text-gray-500">
