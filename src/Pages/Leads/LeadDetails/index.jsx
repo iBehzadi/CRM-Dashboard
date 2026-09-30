@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { FiX } from "react-icons/fi";
 import { useParams, Link } from "react-router-dom";
 import { FiArrowRight, FiPhone, FiMail, FiUser } from "react-icons/fi";
+import { FaEdit } from "react-icons/fa";
 import useLeadStore from "../../../Store/leadStore";
 import useActivityStore from "../../../Store/activityStore";
 import { useState } from "react";
@@ -15,7 +16,7 @@ const LeadDetails = () => {
   const addActivity = useActivityStore((state) => state.addActivity);
   const updateActivity = useActivityStore((state) => state.updateActivity);
   const leadActivities = activities.filter(
-    (activity) => activity.leadId === Number(id),
+    (activity) => activity.leadId === id,
   );
   const [showModal, setShowModal] = useState(false);
   const [editingAct, setEditingAct] = useState(false);
@@ -24,6 +25,14 @@ const LeadDetails = () => {
     new: "جدید",
     Following: "درحال پیگیری",
     Negotiation: "مذاکره",
+  };
+  const typeTranslate = {
+    call: "تماس تلفنی",
+    text: "پیام",
+    email: "ایمیل",
+    meet: "جلسه",
+    note: "یادداشت",
+    Following: "پیگیری",
   };
   const statusStyles = {
     new: "bg-blue-50 text-blue-600",
@@ -38,13 +47,13 @@ const LeadDetails = () => {
       title: act.title,
       description: act.description || "",
       date: act.date,
+      type: act.type,
     });
 
     setShowModal(true);
   };
   const formik = useFormik({
     initialValues: {
-      id: "",
       leadId: "",
       title: "",
       type: "",
@@ -60,7 +69,7 @@ const LeadDetails = () => {
 
     onSubmit: (values) => {
       if (editingAct) {
-        updateActivity(editingAct);
+        updateActivity(editingAct.id, editingAct.leadId, values);
         notify("success", "فعالیت بروز شد");
       } else {
         const newActivity = {
@@ -68,7 +77,6 @@ const LeadDetails = () => {
           ...values,
           leadId: id,
         };
-        console.log(newActivity)
         addActivity(newActivity);
         notify("success", "فعالیت اضافه شد");
       }
@@ -199,10 +207,13 @@ const LeadDetails = () => {
 
               <div className="flex items-center justify-between">
                 <span className="inline-block mt-3 text-xs text-blue-600">
-                  {activity.type}
+                  {typeTranslate[activity.type]}
                 </span>
-                <button onClick={() => handleActEdit(activity)}>
-                  ویرایش فعالیت
+                <button
+                  className="p-2 rounded text-sm bg-gray-400 hover:bg-gray-300"
+                  onClick={() => handleActEdit(activity)}
+                >
+                 <FaEdit className="text-white" />
                 </button>
               </div>
             </div>

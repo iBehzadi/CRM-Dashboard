@@ -73,15 +73,12 @@ const Leads = () => {
 
     validationSchema: Yup.object({
       name: Yup.string().required("نام و نام خانوادگی الزامی است"),
-
       phone: Yup.string()
         .matches(/^09\d{9}$/, "شماره تماس معتبر نیست")
         .required("شماره تماس الزامی است"),
 
       email: Yup.string().email("ایمیل معتبر نیست"),
-
       source: Yup.string().required("منبع سرنخ را انتخاب کنید"),
-
       status: Yup.string().required("وضعیت را انتخاب کنید"),
     }),
 
@@ -94,6 +91,7 @@ const Leads = () => {
           ...values,
           date: new Date().toLocaleDateString("fa-IR"),
         };
+
         addLead(newLead);
       }
 
