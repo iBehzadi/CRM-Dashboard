@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiMoreVertical, FiX } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useLeadStore from "../../Store/leadStore";
-import fetchData from "../../Utils/fetchData";
+import notify from "../../Utils/notify";
 const statusStyles = {
   new: "bg-blue-50 text-blue-600",
-  Following: "bg-yellow-50 text-yellow-600",
-  Negotiation: "bg-purple-50 text-purple-600",
+  following: "bg-yellow-50 text-yellow-600",
+  negotiation: "bg-purple-50 text-purple-600",
 };
 const statusTranslate = {
   new: "جدید",
@@ -27,9 +27,7 @@ const Leads = () => {
   const createLead = useLeadStore((state) => state.createLead);
   const updateLead = useLeadStore((state) => state.updateLead);
   const removeLead = useLeadStore((state) => state.removeLead);
-  const fetchLeads = useLeadStore((state) => state.fetchLeads);
   const leads = useLeadStore((state) => state.leads);
-  
 
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -46,7 +44,8 @@ const Leads = () => {
       phone: lead.phone,
       email: lead.email || "",
       source: lead.source,
-      leadStatus: lead.status,
+      date: lead.date,
+      leadStatus: lead.leadStatus,
       description: lead.description || "",
     });
 
@@ -57,7 +56,7 @@ const Leads = () => {
     const matchesSearch =
       lead.name.includes(search) || lead.phone.includes(search);
     const matchesStatus =
-      statusFilter === "all" || lead.status === statusFilter;
+      statusFilter === "all" || lead.leadStatus === statusFilter;
     const matchesSource =
       sourceFilter === "all" || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
@@ -71,31 +70,28 @@ const Leads = () => {
       source: "",
       leadStatus: "new",
       description: "",
+      date: "",
     },
 
     validationSchema: Yup.object({
       name: Yup.string().required("نام و نام خانوادگی الزامی است"),
-      phone: Yup.string()
-        .matches(/^09\d{9}$/, "شماره تماس معتبر نیست")
-        .required("شماره تماس الزامی است"),
-
+      phone: Yup.string().required("شماره تماس الزامی است"),
+      date: Yup.date().required("تاریخ را مشخص کنید"),
       email: Yup.string().email("ایمیل معتبر نیست"),
       source: Yup.string().required("منبع سرنخ را انتخاب کنید"),
       leadStatus: Yup.string().required("وضعیت را انتخاب کنید"),
     }),
 
     onSubmit: (values) => {
-      editingLead ? updateLead(editingLead.id, values) : createLead(values);
+      editingLead
+        ? updateLead(editingLead.documentId, values)
+        : createLead(values);
 
       formik.resetForm();
       setEditingLead(null);
       setShowModal(false);
     },
   });
-
-  useEffect(() => {
-    fetchLeads()
-  }, []);
 
   return (
     <div className="space-y-6">
@@ -165,8 +161,8 @@ const Leads = () => {
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="new">جدید</option>
-            <option value="Following">در حال پیگیری</option>
-            <option value="Negotiation">مذاکره</option>
+            <option value="following">در حال پیگیری</option>
+            <option value="negotiation">مذاکره</option>
           </select>
 
           {/* Source */}
@@ -225,12 +221,12 @@ const Leads = () => {
             <tbody>
               {filteredLeads.map((lead) => (
                 <tr
-                  key={lead.id}
+                  key={lead.documentId}
                   className="border-b border-gray-100 hover:bg-gray-50"
                 >
                   <td className="px-5 py-4 font-medium text-gray-800">
                     <Link
-                      to={`/leads/${lead.id}`}
+                      to={`/leads/${lead.documentId}`}
                       className="font-medium text-blue-600 hover:underline"
                     >
                       {lead.name}
@@ -252,10 +248,10 @@ const Leads = () => {
                         rounded-full
                         text-xs
                         font-medium
-                        ${statusStyles[lead.status]}
+                        ${statusStyles[lead.leadStatus]}
                       `}
                     >
-                      {statusTranslate[lead.status]}
+                      {statusTranslate[lead.leadStatus]}
                     </span>
                   </td>
 
@@ -267,7 +263,7 @@ const Leads = () => {
                       <div className="absolute shadow bg-white invisible h-0 group-hover:visible flex flex-col justify-center text-[12px] rounded w-20 group-hover:h-auto -top-15 py-3 px-2 items-center">
                         <span
                           className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
-                          onClick={() => removeLead(lead.id)}
+                          onClick={() => removeLead(lead.documentId)}
                         >
                           <MdDelete className="text-red-500" /> حذف
                         </span>
@@ -383,6 +379,27 @@ const Leads = () => {
                   </p>
                 )}
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  تاریخ
+                </label>
+
+                <input
+                  type="date"
+                  name="date"
+                  value={formik.values.date}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="example@gmail.com"
+                  className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                {formik.touched.date && formik.errors.date && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {formik.errors.date}
+                  </p>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -417,15 +434,15 @@ const Leads = () => {
                   </label>
 
                   <select
-                    name="status"
+                    name="leadStatus"
                     value={formik.values.leadStatus}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="new">جدید</option>
-                    <option value="Following">در حال پیگیری</option>
-                    <option value="Negotiation">مذاکره</option>
+                    <option value="following">در حال پیگیری</option>
+                    <option value="negotiation">مذاکره</option>
                   </select>
                 </div>
               </div>

@@ -6,7 +6,7 @@ import { FiArrowRight, FiPhone, FiMail, FiUser } from "react-icons/fi";
 import { FaEdit } from "react-icons/fa";
 import useLeadStore from "../../../Store/leadStore";
 import useActivityStore from "../../../Store/activityStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import notify from "../../../Utils/notify";
 
 const LeadDetails = () => {
@@ -15,6 +15,7 @@ const LeadDetails = () => {
   const activities = useActivityStore((state) => state.activities);
   const addActivity = useActivityStore((state) => state.addActivity);
   const updateActivity = useActivityStore((state) => state.updateActivity);
+   const fetchLeads = useLeadStore((state) => state.fetchLeads);
   const leadActivities = activities.filter(
     (activity) => activity.leadId === id,
   );
@@ -39,7 +40,7 @@ const LeadDetails = () => {
     Following: "bg-yellow-50 text-yellow-600",
     Negotiation: "bg-purple-50 text-purple-600",
   };
-  const lead = leads.find((item) => item.id === Number(id));
+  const lead = leads.find((item) => item.documentId === id);
 
   const handleActEdit = (act) => {
     setEditingAct(act);
@@ -87,6 +88,9 @@ const LeadDetails = () => {
     },
   });
 
+  useEffect(()=>{
+    fetchLeads()
+  },[])
   if (!lead) {
     return (
       <div className="text-center py-10">

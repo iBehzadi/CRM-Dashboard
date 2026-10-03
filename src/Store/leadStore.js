@@ -7,6 +7,13 @@ const useLeadStore = create((set) => ({
 
   createLead: async (lead) => {
     try {
+      const exist = useLeadStore
+        .getState()
+        .leads.some((l) => l.phone === lead.phone);
+      if (exist) {
+        notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
+        return;
+      }
       const res = await fetchData("leads", {
         method: "POST",
         body: JSON.stringify({
@@ -14,11 +21,10 @@ const useLeadStore = create((set) => ({
         }),
       });
 
-
       set((state) => ({
         leads: [...state.leads, res.data],
       }));
-
+      notify("success", "سرنخ ایجاد شد");
       return res.data;
     } catch (error) {
       console.error(error);
@@ -30,18 +36,44 @@ const useLeadStore = create((set) => ({
     const res = await fetchData("leads");
     set({ leads: res.data });
   },
-  removeLead: (leadId) =>
+  removeLead: async (leadId) => {
+    try {
+      await fetchData(`leads/${leadId}`, {
+        method: "DELETE",
+      });
+
+      notify("success", "سرنخ حذف شد");
+    } catch (error) {
+      notify("error", error.message);
+      throw error;
+    }
     set((state) => ({
-      leads: state.leads.filter((item) => item.id !== leadId),
-    })),
+      leads: state.leads.filter((item) => item.documentId !== leadId),
+    }));
+  },
   clearLeads: () => set({ leads: [] }),
 
-  updateLead: (id, updatedLead) =>
+  updateLead: async (documentId, updatedLead) => {
+    try {
+      
+      await fetchData(`leads/${documentId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          data: updatedLead,
+        }),
+      });
+
+      notify("success", "سرنخ به‌روزرسانی شد");
+    } catch (error) {
+      notify("error", error.message);
+      throw error;
+    }
     set((state) => ({
       leads: state.leads.map((lead) =>
-        lead.id === id ? { ...lead, ...updatedLead } : lead,
+        lead.documentId === documentId ? { ...lead, ...updatedLead } : lead,
       ),
-    })),
+    }));
+  },
 }));
 
 export default useLeadStore;
