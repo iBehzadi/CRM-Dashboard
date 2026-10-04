@@ -55,7 +55,6 @@ const useLeadStore = create((set) => ({
 
   updateLead: async (documentId, updatedLead) => {
     try {
-      
       await fetchData(`leads/${documentId}`, {
         method: "PUT",
         body: JSON.stringify({

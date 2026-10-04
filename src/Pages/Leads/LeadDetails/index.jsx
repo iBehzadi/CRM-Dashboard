@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { FiX } from "react-icons/fi";
 import { useParams, Link } from "react-router-dom";
 import { FiArrowRight, FiPhone, FiMail, FiUser } from "react-icons/fi";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import useLeadStore from "../../../Store/leadStore";
 import useActivityStore from "../../../Store/activityStore";
 import { useEffect, useState } from "react";
@@ -15,17 +15,20 @@ const LeadDetails = () => {
   const activities = useActivityStore((state) => state.activities);
   const addActivity = useActivityStore((state) => state.addActivity);
   const updateActivity = useActivityStore((state) => state.updateActivity);
-   const fetchLeads = useLeadStore((state) => state.fetchLeads);
+  const removeActivity = useActivityStore((state) => state.removeActivity);
+  const fetchActivities = useActivityStore((state) => state.fetchActivities);
+  const fetchLeads = useLeadStore((state) => state.fetchLeads);
+
   const leadActivities = activities.filter(
-    (activity) => activity.leadId === id,
+    (activity) => activity.lead.documentId === id,
   );
   const [showModal, setShowModal] = useState(false);
   const [editingAct, setEditingAct] = useState(false);
 
   const statusTranslate = {
     new: "جدید",
-    Following: "درحال پیگیری",
-    Negotiation: "مذاکره",
+    following: "درحال پیگیری",
+    negotiation: "مذاکره",
   };
   const typeTranslate = {
     call: "تماس تلفنی",
@@ -33,12 +36,12 @@ const LeadDetails = () => {
     email: "ایمیل",
     meet: "جلسه",
     note: "یادداشت",
-    Following: "پیگیری",
+    following: "پیگیری",
   };
   const statusStyles = {
     new: "bg-blue-50 text-blue-600",
-    Following: "bg-yellow-50 text-yellow-600",
-    Negotiation: "bg-purple-50 text-purple-600",
+    following: "bg-yellow-50 text-yellow-600",
+    negotiation: "bg-purple-50 text-purple-600",
   };
   const lead = leads.find((item) => item.documentId === id);
 
@@ -49,17 +52,18 @@ const LeadDetails = () => {
       description: act.description || "",
       date: act.date,
       type: act.type,
+      // lead: id,
     });
 
     setShowModal(true);
   };
   const formik = useFormik({
     initialValues: {
-      leadId: "",
       title: "",
       type: "",
       description: "",
       date: "",
+      lead: id,
     },
 
     validationSchema: Yup.object({
@@ -68,29 +72,27 @@ const LeadDetails = () => {
       date: Yup.string().required("تاریخ الزامی است"),
     }),
 
-    onSubmit: (values) => {
-      if (editingAct) {
-        updateActivity(editingAct.id, editingAct.leadId, values);
-        notify("success", "فعالیت بروز شد");
-      } else {
-        const newActivity = {
-          id: Date.now(),
-          ...values,
-          leadId: id,
-        };
-        addActivity(newActivity);
-        notify("success", "فعالیت اضافه شد");
-      }
+    onSubmit: async (values) => {
+      try {
+        if (editingAct) {
+          await updateActivity(editingAct.documentId, values);
+        } else {
+          await addActivity(values);
+        }
 
-      formik.resetForm();
-      setEditingAct(null);
-      setShowModal(false);
+        formik.resetForm();
+        setEditingAct(null);
+        setShowModal(false);
+      } catch (error) {
+        notify("error", message);
+      }
     },
   });
 
-  useEffect(()=>{
-    fetchLeads()
-  },[])
+  useEffect(() => {
+    fetchLeads();
+    fetchActivities();
+  }, []);
   if (!lead) {
     return (
       <div className="text-center py-10">
@@ -137,10 +139,10 @@ const LeadDetails = () => {
 
               <span
                 className={`inline-block mt-1 px-3 py-1 rounded-full text-xs ${
-                  statusStyles[lead.status]
+                  statusStyles[lead.leadStatus]
                 }`}
               >
-                {statusTranslate[lead.status]}
+                {statusTranslate[lead.leadStatus]}
               </span>
             </div>
           </div>
@@ -213,12 +215,26 @@ const LeadDetails = () => {
                 <span className="inline-block mt-3 text-xs text-blue-600">
                   {typeTranslate[activity.type]}
                 </span>
-                <button
-                  className="p-2 rounded text-sm bg-gray-400 hover:bg-gray-300"
-                  onClick={() => handleActEdit(activity)}
-                >
-                 <FaEdit className="text-white" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Edit */}
+                  <button
+                    type="button"
+                    title="ویرایش"
+                    onClick={() => handleActEdit(activity)}
+                    className=" flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-200 transition-all duration-200 active:scale-95 "
+                  >
+                    <FaEdit size={15} />
+                  </button>
+                  {/* Delete */}
+                  <button
+                    type="button"
+                    title="حذف"
+                    onClick={() => removeActivity(activity.documentId)}
+                    className=" flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-200 transition-all duration-200 active:scale-95 "
+                  >
+                    <FaTrash size={15} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -295,7 +311,7 @@ const LeadDetails = () => {
                     <option value="email">ایمیل</option>
                     <option value="meet">جلسه</option>
                     <option value="note">یادداشت</option>
-                    <option value="Following">پیگیری</option>
+                    <option value="following">پیگیری</option>
                   </select>
 
                   {formik.touched.type && formik.errors.type && (

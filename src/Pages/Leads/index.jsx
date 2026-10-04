@@ -6,7 +6,7 @@ import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import useLeadStore from "../../Store/leadStore";
-import notify from "../../Utils/notify";
+
 const statusStyles = {
   new: "bg-blue-50 text-blue-600",
   following: "bg-yellow-50 text-yellow-600",
