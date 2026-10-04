@@ -7,11 +7,13 @@ const useActivityStore = create((set) => ({
 
   fetchActivities: async () => {
     try {
-      const res = await fetchData("activities?populate=lead");
+      const res = await fetchData(
+        "activities?populate=lead&pagination[pageSize]=100",
+      );
       set({ activities: res.data });
     } catch (error) {
+      // پیام خطا را fetchData قبلاً نشان داده است
       console.error(error);
-      throw error;
     }
   },
   addActivity: async (activity) => {
@@ -34,14 +36,9 @@ const useActivityStore = create((set) => ({
     }
   },
   removeActivity: async (activityId) => {
-    try {
-      await fetchData(`activities/${activityId}`, {
-        method: "DELETE",
-      });
-    } catch (error) {
-      notify("error", error.message);
-      throw error;
-    }
+    await fetchData(`activities/${activityId}`, {
+      method: "DELETE",
+    });
     set((state) => ({
       activities: state.activities.filter(
         (activity) => activity.documentId !== activityId,
@@ -51,23 +48,22 @@ const useActivityStore = create((set) => ({
   },
 
   updateActivity: async (actId, updatedActivity) => {
-    try {
-      await fetchData(`activities/${actId}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          data: updatedActivity,
-        }),
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    // فیلد lead در استیت یک آبجکت است. اگر رشته‌ی id روی آن بنشیند،
+    // activity.lead.documentId از بین می‌رود و فعالیت از لیست ناپدید می‌شود.
+    // eslint-disable-next-line no-unused-vars
+    const { lead, ...changes } = updatedActivity;
+    await fetchData(`activities/${actId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        data: updatedActivity,
+      }),
+    });
     set((state) => ({
       activities: state.activities.map((activity) =>
         activity.documentId === actId
           ? {
               ...activity,
-              ...updatedActivity,
+              ...changes,
             }
           : activity,
       ),

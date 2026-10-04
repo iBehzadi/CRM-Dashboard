@@ -82,16 +82,32 @@ const Leads = () => {
       leadStatus: Yup.string().required("وضعیت را انتخاب کنید"),
     }),
 
-    onSubmit: (values) => {
-      editingLead
-        ? updateLead(editingLead.documentId, values)
-        : createLead(values);
-
-      formik.resetForm();
-      setEditingLead(null);
-      setShowModal(false);
+    onSubmit: async (values) => {
+      try {
+        if (editingLead) {
+          await updateLead(editingLead.documentId, values);
+        } else {
+          const created = await createLead(values);
+          
+          if (!created) return;
+        }
+        closeModal();
+      } catch {
+       
+      }
     },
   });
+
+  
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingLead(null);
+    formik.resetForm();
+  };
+
+  const handleRemove = (documentId) => {
+    removeLead(documentId).catch(() => {});
+  };
 
   return (
     <div className="space-y-6">
@@ -263,7 +279,7 @@ const Leads = () => {
                       <div className="absolute shadow bg-white invisible h-0 group-hover:visible flex flex-col justify-center text-[12px] rounded w-20 group-hover:h-auto -top-15 py-3 px-2 items-center">
                         <span
                           className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
-                          onClick={() => removeLead(lead.documentId)}
+                          onClick={() => handleRemove(lead.documentId)}
                         >
                           <MdDelete className="text-red-500" /> حذف
                         </span>
@@ -287,7 +303,7 @@ const Leads = () => {
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
           <div
-            onClick={() => setShowModal(false)}
+            onClick={closeModal}
             className="absolute inset-0 bg-black/40"
           />
 
@@ -303,7 +319,8 @@ const Leads = () => {
               </div>
 
               <button
-                onClick={() => setShowModal(false)}
+                type="button"
+                onClick={closeModal}
                 className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
               >
                 <FiX size={20} />
@@ -390,7 +407,6 @@ const Leads = () => {
                   value={formik.values.date}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  placeholder="example@gmail.com"
                   className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
@@ -464,10 +480,8 @@ const Leads = () => {
               </div>
               <div className="flex justify-end gap-3 p-5 border-t border-blue-400">
                 <button
-                  onClick={() => {
-                    setShowModal(false);
-                    formik.resetForm();
-                  }}
+                  type="button"
+                  onClick={closeModal}
                   className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
                 >
                   انصراف

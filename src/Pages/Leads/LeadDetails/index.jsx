@@ -7,7 +7,6 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import useLeadStore from "../../../Store/leadStore";
 import useActivityStore from "../../../Store/activityStore";
 import { useEffect, useState } from "react";
-import notify from "../../../Utils/notify";
 
 const LeadDetails = () => {
   const { id } = useParams();
@@ -20,10 +19,10 @@ const LeadDetails = () => {
   const fetchLeads = useLeadStore((state) => state.fetchLeads);
 
   const leadActivities = activities.filter(
-    (activity) => activity.lead.documentId === id,
+    (activity) => activity.lead?.documentId === id,
   );
   const [showModal, setShowModal] = useState(false);
-  const [editingAct, setEditingAct] = useState(false);
+  const [editingAct, setEditingAct] = useState(null);
 
   const statusTranslate = {
     new: "جدید",
@@ -52,7 +51,7 @@ const LeadDetails = () => {
       description: act.description || "",
       date: act.date,
       type: act.type,
-      // lead: id,
+
     });
 
     setShowModal(true);
@@ -77,20 +76,28 @@ const LeadDetails = () => {
         if (editingAct) {
           await updateActivity(editingAct.documentId, values);
         } else {
-          await addActivity(values);
+          await addActivity({ ...values, lead: id });
         }
-
-        formik.resetForm();
-        setEditingAct(null);
-        setShowModal(false);
-      } catch (error) {
-        notify("error", message);
+        closeModal();
+      } catch {
+        
       }
     },
   });
 
+ 
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingAct(null);
+    formik.resetForm();
+  };
+
+  const handleActRemove = (documentId) => {
+    removeActivity(documentId).catch(() => {});
+  };
+
   useEffect(() => {
-    fetchLeads();
+    if (leads.length === 0) fetchLeads();
     fetchActivities();
   }, []);
   if (!lead) {
@@ -229,7 +236,7 @@ const LeadDetails = () => {
                   <button
                     type="button"
                     title="حذف"
-                    onClick={() => removeActivity(activity.documentId)}
+                    onClick={() => handleActRemove(activity.documentId)}
                     className=" flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-200 transition-all duration-200 active:scale-95 "
                   >
                     <FaTrash size={15} />
@@ -244,7 +251,7 @@ const LeadDetails = () => {
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
           <div
-            onClick={() => setShowModal(false)}
+            onClick={closeModal}
             className="absolute inset-0 bg-black/40"
           />
 
@@ -260,7 +267,8 @@ const LeadDetails = () => {
               </div>
 
               <button
-                onClick={() => setShowModal(false)}
+                type="button"
+                onClick={closeModal}
                 className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
               >
                 <FiX size={20} />
@@ -302,10 +310,9 @@ const LeadDetails = () => {
                     value={formik.values.type}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder="نوع فعالیت"
                     className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option>-</option>
+                    <option value="">-</option>
                     <option value="call">تماس تلفنی</option>
                     <option value="text">پیام</option>
                     <option value="email">ایمیل</option>
@@ -323,7 +330,7 @@ const LeadDetails = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عنوان فعالیت <span className="text-red-400">*</span>
+                    تاریخ <span className="text-red-400">*</span>
                   </label>
 
                   <input
@@ -332,7 +339,6 @@ const LeadDetails = () => {
                     value={formik.values.date}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder="مثلاً تماس مجدد "
                     className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
                   />
 
@@ -361,10 +367,8 @@ const LeadDetails = () => {
               </div>
               <div className="flex justify-end gap-3 p-5 border-t border-blue-400">
                 <button
-                  onClick={() => {
-                    setShowModal(false);
-                    formik.resetForm();
-                  }}
+                  type="button"
+                  onClick={closeModal}
                   className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
                 >
                   انصراف

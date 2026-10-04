@@ -6,11 +6,11 @@ import useLeadStore from "./Store/leadStore";
 
 export default function App() {
   const fetchLeads = useLeadStore((state) => state.fetchLeads);
-  
+
   useEffect(() => {
     fetchLeads();
+  }, [fetchLeads]);
 
-  }, []);
   return (
     <>
       <RouterProvider router={router} />
