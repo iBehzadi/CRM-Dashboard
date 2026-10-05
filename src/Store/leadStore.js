@@ -34,16 +34,16 @@ const useLeadStore = create((set) => ({
 
   fetchLeads: async () => {
     try {
-      // Strapi به‌طور پیش‌فرض فقط ۲۵ رکورد برمی‌گرداند؛ حداکثر مجاز ۱۰۰ است
+      
       const res = await fetchData("leads?pagination[pageSize]=100");
       set({ leads: res.data });
     } catch (error) {
-      // پیام خطا را fetchData قبلاً نشان داده است
+      
       console.error(error);
     }
   },
   removeLead: async (leadId) => {
-    // اگر درخواست fail شود، fetchData پیام خطا را نشان می‌دهد و اینجا قطع می‌شود
+    
     await fetchData(`leads/${leadId}`, {
       method: "DELETE",
     });
@@ -55,6 +55,13 @@ const useLeadStore = create((set) => ({
   clearLeads: () => set({ leads: [] }),
 
   updateLead: async (documentId, updatedLead) => {
+    const exist = useLeadStore
+      .getState()
+      .leads.some((l) => l.phone === updatedLead.phone);
+    if (exist) {
+      notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
+      return null;
+    }
     await fetchData(`leads/${documentId}`, {
       method: "PUT",
       body: JSON.stringify({

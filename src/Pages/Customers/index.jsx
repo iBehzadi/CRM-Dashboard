@@ -56,17 +56,17 @@ const Customers = () => {
           await updateCustomer(editingCustomer.documentId, values);
         } else {
           const created = await createCustomer(values);
-          // شماره‌ی تکراری: چیزی برنمی‌گردد و مودال باز می‌ماند
+         
           if (!created) return;
         }
         closeModal();
       } catch {
-        // پیام خطا را fetchData نشان داده؛ مودال باز می‌ماند تا اطلاعات از بین نرود
+        
       }
     },
   });
 
-  // تنها راه بستن مودال: فرم و حالت ویرایش را هم ریست می‌کند
+  
   const closeModal = () => {
     setShowModal(false);
     setEditingCustomer(null);

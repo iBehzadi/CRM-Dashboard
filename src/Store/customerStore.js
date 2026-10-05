@@ -39,6 +39,11 @@ const useCustomerStore = create((set, get) => ({
   },
 
   updateCustomer: async (documentId, updatedCustomer) => {
+    const exist = get().customers.some((c) => c.phone === updatedCustomer.phone);
+    if (exist) {
+      notify("error", "مشتری با این شماره تماس قبلاً وجود دارد");
+      return null;
+    }
     await fetchData(`customers/${documentId}`, {
       method: "PUT",
       body: JSON.stringify({ data: updatedCustomer }),
