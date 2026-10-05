@@ -1,15 +1,19 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FiX } from "react-icons/fi";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { FiArrowRight, FiPhone, FiMail, FiUser } from "react-icons/fi";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import useLeadStore from "../../../Store/leadStore";
 import useActivityStore from "../../../Store/activityStore";
 import { useEffect, useState } from "react";
+import useCustomerStore from "../../../Store/customerStore";
 
 const LeadDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const convertLead = useCustomerStore((state) => state.convertLead);
+  const [converting, setConverting] = useState(false);
   const leads = useLeadStore((state) => state.leads);
   const activities = useActivityStore((state) => state.activities);
   const addActivity = useActivityStore((state) => state.addActivity);
@@ -28,6 +32,7 @@ const LeadDetails = () => {
     new: "جدید",
     following: "درحال پیگیری",
     negotiation: "مذاکره",
+    converted: "تبدیل‌شده",
   };
   const typeTranslate = {
     call: "تماس تلفنی",
@@ -41,6 +46,7 @@ const LeadDetails = () => {
     new: "bg-blue-50 text-blue-600",
     following: "bg-yellow-50 text-yellow-600",
     negotiation: "bg-purple-50 text-purple-600",
+    converted: "bg-green-50 text-green-600",
   };
   const lead = leads.find((item) => item.documentId === id);
 
@@ -51,7 +57,6 @@ const LeadDetails = () => {
       description: act.description || "",
       date: act.date,
       type: act.type,
-
     });
 
     setShowModal(true);
@@ -79,13 +84,10 @@ const LeadDetails = () => {
           await addActivity({ ...values, lead: id });
         }
         closeModal();
-      } catch {
-        
-      }
+      } catch {}
     },
   });
 
- 
   const closeModal = () => {
     setShowModal(false);
     setEditingAct(null);
@@ -95,11 +97,22 @@ const LeadDetails = () => {
   const handleActRemove = (documentId) => {
     removeActivity(documentId).catch(() => {});
   };
-
+  const handleConvert = async () => {
+    if (!window.confirm(`«${lead.name}» به مشتری تبدیل شود؟`)) return;
+    setConverting(true);
+    try {
+      const customer = await convertLead(lead);
+      if (customer) navigate("/customers");
+    } catch {
+    } finally {
+      setConverting(false);
+    }
+  };
   useEffect(() => {
     if (leads.length === 0) fetchLeads();
     fetchActivities();
   }, []);
+
   if (!lead) {
     return (
       <div className="text-center py-10">
@@ -152,6 +165,16 @@ const LeadDetails = () => {
                 {statusTranslate[lead.leadStatus]}
               </span>
             </div>
+            {lead.leadStatus !== "converted" && (
+              <button
+                type="button"
+                onClick={handleConvert}
+                disabled={converting}
+                className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+              >
+                {converting ? "در حال تبدیل ..." : "تبدیل به مشتری"}
+              </button>
+            )}
           </div>
         </div>
 
@@ -250,10 +273,7 @@ const LeadDetails = () => {
       {showModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
-          <div
-            onClick={closeModal}
-            className="absolute inset-0 bg-black/40"
-          />
+          <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
 
           {/* Modal */}
           <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">

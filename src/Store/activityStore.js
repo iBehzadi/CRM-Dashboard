@@ -12,7 +12,7 @@ const useActivityStore = create((set) => ({
       );
       set({ activities: res.data });
     } catch (error) {
-      // پیام خطا را fetchData قبلاً نشان داده است
+      notify("error", "خطا در دریافت فعالیت‌ها");
       console.error(error);
     }
   },
@@ -31,7 +31,7 @@ const useActivityStore = create((set) => ({
 
       return true;
     } catch (error) {
-      console.error(error);
+      notify("error", "خطا در ایجاد فعالیت");
       throw error;
     }
   },
@@ -48,9 +48,7 @@ const useActivityStore = create((set) => ({
   },
 
   updateActivity: async (actId, updatedActivity) => {
-    // فیلد lead در استیت یک آبجکت است. اگر رشته‌ی id روی آن بنشیند،
-    // activity.lead.documentId از بین می‌رود و فعالیت از لیست ناپدید می‌شود.
-    // eslint-disable-next-line no-unused-vars
+    
     const { lead, ...changes } = updatedActivity;
     await fetchData(`activities/${actId}`, {
       method: "PUT",

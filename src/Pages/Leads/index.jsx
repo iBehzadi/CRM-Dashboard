@@ -11,11 +11,13 @@ const statusStyles = {
   new: "bg-blue-50 text-blue-600",
   following: "bg-yellow-50 text-yellow-600",
   negotiation: "bg-purple-50 text-purple-600",
+  converted: "bg-green-50 text-green-600",
 };
 const statusTranslate = {
   new: "جدید",
   following: "درحال پیگیری",
   negotiation: "مذاکره",
+  converted: "تبدیل‌شده",
 };
 const sourceTranslate = {
   instagram: "اینستاگرام",
@@ -88,17 +90,14 @@ const Leads = () => {
           await updateLead(editingLead.documentId, values);
         } else {
           const created = await createLead(values);
-          
+
           if (!created) return;
         }
         closeModal();
-      } catch {
-       
-      }
+      } catch {}
     },
   });
 
-  
   const closeModal = () => {
     setShowModal(false);
     setEditingLead(null);
@@ -179,6 +178,7 @@ const Leads = () => {
             <option value="new">جدید</option>
             <option value="following">در حال پیگیری</option>
             <option value="negotiation">مذاکره</option>
+            <option value="converted">تبدیل‌شده</option>
           </select>
 
           {/* Source */}
@@ -302,10 +302,7 @@ const Leads = () => {
       {showModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
-          <div
-            onClick={closeModal}
-            className="absolute inset-0 bg-black/40"
-          />
+          <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
 
           {/* Modal */}
           <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
@@ -459,6 +456,9 @@ const Leads = () => {
                     <option value="new">جدید</option>
                     <option value="following">در حال پیگیری</option>
                     <option value="negotiation">مذاکره</option>
+                    <option value="converted" disabled>
+                      تبدیل‌شده
+                    </option>
                   </select>
                 </div>
               </div>
