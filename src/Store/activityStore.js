@@ -2,9 +2,10 @@ import { create } from "zustand";
 import fetchData from "../Utils/fetchData";
 import notify from "../Utils/notify";
 
-const useActivityStore = create((set) => ({
+const useActivityStore = create((set, get) => ({
   activities: [],
 
+  //fetch activity - get activity
   fetchActivities: async () => {
     try {
       const res = await fetchData(
@@ -16,6 +17,7 @@ const useActivityStore = create((set) => ({
       console.error(error);
     }
   },
+  //add activity
   addActivity: async (activity) => {
     try {
       await fetchData("activities", {
@@ -24,32 +26,34 @@ const useActivityStore = create((set) => ({
           data: activity,
         }),
       });
-
-      await useActivityStore.getState().fetchActivities();
-
+      await get().fetchActivities();
       notify("success", "فعالیت ایجاد شد");
-
       return true;
     } catch (error) {
       notify("error", "خطا در ایجاد فعالیت");
       throw error;
     }
   },
+  //remove activity
   removeActivity: async (activityId) => {
-    await fetchData(`activities/${activityId}`, {
-      method: "DELETE",
-    });
-    set((state) => ({
-      activities: state.activities.filter(
-        (activity) => activity.documentId !== activityId,
-      ),
-    }));
-    notify("success", "فعالیت حذف شد");
+    try {
+      await fetchData(`activities/${activityId}`, {
+        method: "DELETE",
+      });
+      set((state) => ({
+        activities: state.activities.filter(
+          (activity) => activity.documentId !== activityId,
+        ),
+      }));
+      notify("success", "فعالیت حذف شد");
+    } catch (error) {
+      notify("error", "خطا در حذف فعالیت");
+      console.error(error);
+    }
   },
-
+  //update activity
   updateActivity: async (actId, updatedActivity) => {
-    
-    const { lead, ...changes } = updatedActivity;
+    const { ...changes } = updatedActivity;
     await fetchData(`activities/${actId}`, {
       method: "PUT",
       body: JSON.stringify({

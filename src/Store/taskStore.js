@@ -6,6 +6,7 @@ const useTaskStore = create((set, get) => ({
   tasks: [],
   loading: false,
 
+  //fetch tasks - get tasks
   fetchTasks: async ({ silent = false } = {}) => {
     if (!silent) set({ loading: true });
     try {
@@ -21,6 +22,7 @@ const useTaskStore = create((set, get) => ({
     }
   },
 
+  //create task
   createTask: async (task) => {
     try {
       await fetchData("tasks", {
@@ -36,15 +38,20 @@ const useTaskStore = create((set, get) => ({
     }
   },
 
+  //update task
   updateTask: async (documentId, changes) => {
-    await fetchData(`tasks/${documentId}`, {
-      method: "PUT",
-      body: JSON.stringify({ data: changes }),
-    });
-    await get().fetchTasks({ silent: true });
-    notify("success", "وظیفه به‌روزرسانی شد");
+    try {
+      await fetchData(`tasks/${documentId}`, {
+        method: "PUT",
+        body: JSON.stringify({ data: changes }),
+      });
+      await get().fetchTasks({ silent: true });
+    } catch (error) {
+      notify("error", "خطا در به‌روزرسانی وظیفه");
+      console.error(error);
+    }
   },
-
+  //remove task
   removeTask: async (documentId) => {
     await fetchData(`tasks/${documentId}`, { method: "DELETE" });
     set((state) => ({

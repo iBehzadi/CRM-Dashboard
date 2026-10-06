@@ -1,0 +1,7 @@
+//page size is 100 if there are more than 100 customers, this check might not be accurate -- repair this if needed
+
+09121234567
++989121234567
+00989121234567
+
+normalize

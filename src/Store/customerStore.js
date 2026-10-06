@@ -6,7 +6,7 @@ import useLeadStore from "./leadStore";
 const useCustomerStore = create((set, get) => ({
   customers: [],
   loading: false,
-
+  //fetch customers
   fetchCustomers: async ({ silent = false } = {}) => {
     if (!silent) set({ loading: true });
     try {
@@ -15,13 +15,13 @@ const useCustomerStore = create((set, get) => ({
       );
       set({ customers: res.data });
     } catch (error) {
-     
+      notify("error", "خطا در دریافت مشتریان");
       console.error(error);
     } finally {
       set({ loading: false });
     }
   },
-
+  //create customer
   createCustomer: async (customer) => {
     const exist = get().customers.some((c) => c.phone === customer.phone);
     if (exist) {
@@ -32,14 +32,16 @@ const useCustomerStore = create((set, get) => ({
       method: "POST",
       body: JSON.stringify({ data: customer }),
     });
-    
+
     await get().fetchCustomers({ silent: true });
     notify("success", "مشتری ایجاد شد");
     return res.data;
   },
-
+  //update customer
   updateCustomer: async (documentId, updatedCustomer) => {
-    const exist = get().customers.some((c) => c.phone === updatedCustomer.phone);
+    const exist = get().customers.some(
+      (c) => c.phone === updatedCustomer.phone,
+    );
     if (exist) {
       notify("error", "مشتری با این شماره تماس قبلاً وجود دارد");
       return null;
@@ -55,7 +57,7 @@ const useCustomerStore = create((set, get) => ({
     }));
     notify("success", "مشتری به‌روزرسانی شد");
   },
-
+  //remove customer
   removeCustomer: async (documentId) => {
     await fetchData(`customers/${documentId}`, { method: "DELETE" });
     set((state) => ({
@@ -64,7 +66,7 @@ const useCustomerStore = create((set, get) => ({
     notify("success", "مشتری حذف شد");
   },
 
-  
+  //convert lead to customer
   convertLead: async (lead) => {
     if (get().customers.length === 0) {
       await get().fetchCustomers({ silent: true });
