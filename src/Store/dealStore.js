@@ -6,6 +6,7 @@ const useDealStore = create((set, get) => ({
   deals: [],
   loading: false,
 
+
   fetchDeals: async ({ silent = false } = {}) => {
     if (!silent) set({ loading: true });
     try {

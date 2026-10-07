@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
 html {
-    direction: rtl;
+  direction: rtl;
+}
+
+@font-face {
+  font-family: "Estedad";
+  src:
+    url("./assets/fonts/Estedad-VariableFont_wght.woff2") format("woff2"),
+    url("./assets/fonts/Estedad-VariableFont_wght.eot") format("eot"),
+    url("./assets/fonts/Estedad-VariableFont_wght.ttf") format("ttf")
+      url("./assets/fonts/Estedad-VariableFont_wght.woff") format("woff");
+  font-weight: 100 900;
+}
+
+body {
+  font-family: "Estedad", sans-serif;
 }
