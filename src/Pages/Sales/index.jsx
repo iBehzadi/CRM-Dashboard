@@ -3,22 +3,29 @@ import { FiPlus } from "react-icons/fi";
 import { CiFilter } from "react-icons/ci";
 import { MdOutlineWbSunny } from "react-icons/md";
 import useDealStore from "../../Store/dealStore";
+import SaleFormModal from "./SaleFormModal";
+import useCustomerStore from "../../Store/customerStore";
+
+const statusStyles = {
+  won: "bg-green-50 text-green-600",
+  lost: "bg-red-50 text-red-600",
+  waiting: "bg-yellow-50 text-yellow-600",
+};
+const statusTranslate = {
+  won: "موفق",
+  lost: "ناموفق",
+  waiting: "درانتظار پرداخت",
+};
 
 export default function Sales() {
   const deals = useDealStore((state) => state.deals);
   const fetchDeals = useDealStore((state) => state.fetchDeals);
   const [stageFilter, setStageFilter] = useState("all");
-
-  const statusStyles = {
-    won: "bg-green-50 text-green-600",
-    lost: "bg-red-50 text-red-600",
-    waiting: "bg-yellow-50 text-yellow-600",
-  };
-  const statusTranslate = {
-    won: "موفق",
-    lost: "ناموفق",
-    waiting: "درانتظار پرداخت",
-  };
+  const [showSaleModal, setShowSaleModal] = useState(false);
+  const customers = useCustomerStore((state) => state.customers);
+  const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
+  const createDeal = useDealStore((state) => state.createDeal);
+  
   const sales = useMemo(() => {
     return deals.filter(
       (deal) =>
@@ -72,7 +79,8 @@ export default function Sales() {
 
   useEffect(() => {
     fetchDeals();
-  }, [fetchDeals]);
+    fetchCustomers();
+  }, [fetchDeals, fetchCustomers]);
 
   const formatPrice = (amount) =>
     `${Number(amount || 0).toLocaleString("fa-IR")} تومان`;
@@ -89,10 +97,10 @@ export default function Sales() {
         </div>
 
         <button
-          type="button"
-          className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-white transition hover:bg-blue-700"
+          onClick={() => setShowSaleModal(true)}
+          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
-          <FiPlus size={18} />
+          <FiPlus />
           ثبت فروش
         </button>
       </div>
@@ -284,6 +292,16 @@ export default function Sales() {
           </table>
         </div>
       </div>
+      {showSaleModal && (
+        <SaleFormModal
+          customers={customers}
+          onClose={() => setShowSaleModal(false)}
+          onCreate={async (payload) => {
+            await createDeal(payload);
+            await fetchDeals();
+          }}
+        />
+      )}
     </div>
   );
 }
