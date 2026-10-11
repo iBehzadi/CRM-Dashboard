@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import { CiFilter } from "react-icons/ci";
 import { MdOutlineWbSunny } from "react-icons/md";
 import useDealStore from "../../Store/dealStore";
 import SaleFormModal from "./SaleFormModal";
 import useCustomerStore from "../../Store/customerStore";
+import { FcClearFilters, FcFilledFilter } from "react-icons/fc";
+import { SlBasket } from "react-icons/sl";
+import { IoWalletOutline } from "react-icons/io5";
 
 const statusStyles = {
   won: "bg-green-50 text-green-600",
@@ -25,14 +27,32 @@ export default function Sales() {
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
   const createDeal = useDealStore((state) => state.createDeal);
-  
+  const [search, setSearch] = useState("");
+
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  //filter and sort
   const sales = useMemo(() => {
-    return deals.filter(
-      (deal) =>
-        (deal.stage === "won" || deal.stage === "lost") &&
-        (stageFilter === "all" || deal.stage === stageFilter),
-    );
-  }, [deals, stageFilter]);
+    return deals.filter((deal) => {
+      const matchSearch =
+        deal.title.includes(search) || deal.customer.name.includes(search);
+      if (deal.stage !== "won" && deal.stage !== "lost") {
+        return false;
+      }
+      if (stageFilter !== "all" && deal.stage !== stageFilter) {
+        return false;
+      }
+
+      if (!deal.closedAt) return false;
+      const date = deal.closedAt.slice(0, 10);
+      return (
+        (!fromDate || date >= fromDate) &&
+        (!toDate || date <= toDate) &&
+        matchSearch
+      );
+    });
+  }, [deals, stageFilter, fromDate, toDate, search]);
 
   const summary = useMemo(() => {
     const salesData = deals.filter((dale) => dale.stage === "won");
@@ -115,6 +135,7 @@ export default function Sales() {
             iconColor: "text-amber-500",
             border: "border-amber-200",
             bg: "bg-amber-50",
+            icon: MdOutlineWbSunny,
           },
           {
             title: "فروش این ماه",
@@ -123,6 +144,7 @@ export default function Sales() {
             iconColor: "text-blue-500",
             border: "border-blue-200",
             bg: "bg-blue-50",
+            icon: FcFilledFilter,
           },
           {
             title: "تعداد فروش این ماه",
@@ -131,6 +153,7 @@ export default function Sales() {
             iconColor: "text-green-500",
             border: "border-green-200",
             bg: "bg-green-50",
+            icon: SlBasket,
           },
           {
             title: "میانگین فروش این ماه",
@@ -139,27 +162,31 @@ export default function Sales() {
             iconColor: "text-purple-500",
             border: "border-purple-200",
             bg: "bg-purple-50",
+            icon: IoWalletOutline,
           },
-        ].map((card) => (
-          <div
-            key={card.title}
-            className={`rounded-xl border ${card.border} ${card.bg} p-4`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-sm font-medium text-gray-700">
-                {card.title}
-              </h2>
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={card.title}
+              className={`rounded-xl border ${card.border} ${card.bg} p-4`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-sm font-medium text-gray-700">
+                  {card.title}
+                </h2>
 
-              <MdOutlineWbSunny
-                className={`h-11 w-11 shrink-0 rounded-full ${card.iconBg} p-2 text-3xl ${card.iconColor}`}
-              />
+                <Icon
+                  className={`h-11 w-11 shrink-0 rounded-full ${card.iconBg} p-2 text-3xl ${card.iconColor}`}
+                ></Icon>
+              </div>
+
+              <h3 className="mt-4 wrap-break-word text-lg font-bold text-gray-800">
+                {card.value}
+              </h3>
             </div>
-
-            <h3 className="mt-4 wrap-break-word text-lg font-bold text-gray-800">
-              {card.value}
-            </h3>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Filters */}
@@ -187,6 +214,8 @@ export default function Sales() {
               از تاریخ
             </label>
             <input
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
               id="fromDate"
               type="date"
               className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 outline-none focus:ring-2 focus:ring-blue-500"
@@ -198,7 +227,9 @@ export default function Sales() {
               تا تاریخ
             </label>
             <input
+              value={toDate}
               id="toDate"
+              onChange={(e) => setToDate(e.target.value)}
               type="date"
               className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -207,14 +238,36 @@ export default function Sales() {
           <button
             type="button"
             onClick={() => {
-              document.getElementById("fromDate").value = "";
-              document.getElementById("toDate").value = "";
+              setFromDate("");
+              setToDate("");
             }}
             className="flex h-10 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 text-sm text-gray-600 transition hover:border-blue-400 hover:text-blue-600"
           >
-            <CiFilter size={20} />
+            <FcClearFilters size={20} />
             پاک کردن تاریخ‌ها
           </button>
+
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            name=""
+            id=""
+            placeholder="جستجو نام مشتری یا عنوان محصول ..."
+            className="
+                w-full
+                h-10
+                pr-10
+                pl-4
+                rounded-lg
+                bg-gray-50
+                border
+                border-gray-200
+                outline-none
+                focus:ring-2
+                focus:ring-blue-500
+              "
+          />
         </div>
       </div>
 
