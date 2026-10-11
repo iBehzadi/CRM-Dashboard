@@ -35,6 +35,7 @@ const useTaskStore = create((set, get) => ({
     } catch (error) {
       notify("error", "خطا در ایجاد وظیفه");
       console.error(error);
+      throw error;
     }
   },
 
@@ -49,6 +50,7 @@ const useTaskStore = create((set, get) => ({
     } catch (error) {
       notify("error", "خطا در به‌روزرسانی وظیفه");
       console.error(error);
+      throw error;
     }
   },
   //remove task

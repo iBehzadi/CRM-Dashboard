@@ -11,12 +11,12 @@ const useLeadStore = create((set, get) => ({
       const exist = get().leads.some((l) => l.phone === lead.phone);
       if (exist) {
         notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
-        return;
+        return null;
       }
-      const customerExists  = useCustomerStore.getState().customers.some(
-        (c) => c.phone === lead.phone,
-      );
-      if (customerExists ) {
+      const customerExists = useCustomerStore
+        .getState()
+        .customers.some((c) => c.phone === lead.phone);
+      if (customerExists) {
         //page size is 100 if there are more than 100 customers, this check might not be accurate -- repair this if needed
         notify("error", "سرنخ با این شماره موبایل قبلاً در مشتریان وجود دارد");
         return;
@@ -62,7 +62,10 @@ const useLeadStore = create((set, get) => ({
 
   //update lead
   updateLead: async (documentId, updatedLead) => {
-    const exist = get().leads.some((l) => l.phone === updatedLead.phone);
+    const exist = get().leads.some(
+      (lead) =>
+        lead.documentId !== documentId && lead.phone === updatedLead.phone,
+    );
     if (exist) {
       notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
       return null;

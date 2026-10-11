@@ -53,20 +53,21 @@ const Customers = () => {
     onSubmit: async (values) => {
       try {
         if (editingCustomer) {
-          await updateCustomer(editingCustomer.documentId, values);
+          const result = await updateCustomer(
+            editingCustomer.documentId,
+            values,
+          );
+          if (result === null) return;
+          closeModal();
         } else {
           const created = await createCustomer(values);
-         
           if (!created) return;
+          closeModal();
         }
-        closeModal();
-      } catch {
-        
-      }
+      } catch {}
     },
   });
 
-  
   const closeModal = () => {
     setShowModal(false);
     setEditingCustomer(null);
@@ -175,7 +176,10 @@ const Customers = () => {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center text-gray-500"
+                  >
                     در حال بارگذاری...
                   </td>
                 </tr>
@@ -206,7 +210,9 @@ const Customers = () => {
                     className="border-b border-gray-100 hover:bg-gray-50"
                   >
                     <td className="px-5 py-4">
-                      <p className="font-medium text-gray-800">{customer.name}</p>
+                      <p className="font-medium text-gray-800">
+                        {customer.name}
+                      </p>
                       {customer.lead && (
                         <Link
                           to={`/leads/${customer.lead.documentId}`}
@@ -216,7 +222,9 @@ const Customers = () => {
                         </Link>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-gray-600">{customer.phone}</td>
+                    <td className="px-5 py-4 text-gray-600">
+                      {customer.phone}
+                    </td>
                     <td className="px-5 py-4 text-gray-600">
                       {customer.email || "-"}
                     </td>
@@ -291,7 +299,9 @@ const Customers = () => {
                     className={inputClass}
                   />
                   {formik.touched.name && formik.errors.name && (
-                    <p className="mt-1 text-xs text-red-500">{formik.errors.name}</p>
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.name}
+                    </p>
                   )}
                 </div>
 
@@ -309,7 +319,9 @@ const Customers = () => {
                     className={inputClass}
                   />
                   {formik.touched.phone && formik.errors.phone && (
-                    <p className="mt-1 text-xs text-red-500">{formik.errors.phone}</p>
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.phone}
+                    </p>
                   )}
                 </div>
               </div>
@@ -329,7 +341,9 @@ const Customers = () => {
                     className={inputClass}
                   />
                   {formik.touched.email && formik.errors.email && (
-                    <p className="mt-1 text-xs text-red-500">{formik.errors.email}</p>
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.email}
+                    </p>
                   )}
                 </div>
 
@@ -352,7 +366,9 @@ const Customers = () => {
                     ))}
                   </select>
                   {formik.touched.source && formik.errors.source && (
-                    <p className="mt-1 text-xs text-red-500">{formik.errors.source}</p>
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.source}
+                    </p>
                   )}
                 </div>
               </div>

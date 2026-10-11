@@ -6,6 +6,7 @@ import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import useLeadStore from "../../Store/leadStore";
+import notify from "../../Utils/notify";
 
 const statusStyles = {
   new: "bg-blue-50 text-blue-600",
@@ -87,14 +88,18 @@ const Leads = () => {
     onSubmit: async (values) => {
       try {
         if (editingLead) {
-          await updateLead(editingLead.documentId, values);
+          const result = await updateLead(editingLead.documentId, values);
+          if (result === null) return;
+          closeModal();
         } else {
           const created = await createLead(values);
-
           if (!created) return;
+          closeModal();
         }
-        closeModal();
-      } catch {}
+      } catch (error) {
+        notify("error", error.message);
+        console.log(error.message);
+      }
     },
   });
 

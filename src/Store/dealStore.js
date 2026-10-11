@@ -57,6 +57,7 @@ const useDealStore = create((set, get) => ({
     } catch (error) {
       notify("error", "خطا در به‌روزرسانی معامله");
       console.error(error);
+      throw error;
     } finally {
       set({ loading: false });
     }

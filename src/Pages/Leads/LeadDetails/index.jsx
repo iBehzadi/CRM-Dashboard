@@ -102,12 +102,16 @@ const LeadDetails = () => {
     setConverting(true);
     try {
       const customer = await convertLead(lead);
-      if (customer) navigate("/customers");
-    } catch {
+      if (!customer) return;
+      await fetchLeads();
+      navigate("/customers");
+    } catch (error) {
+      console.error("خطا در تبدیل سرنخ به مشتری:", error);
     } finally {
       setConverting(false);
     }
   };
+
   useEffect(() => {
     if (leads.length === 0) fetchLeads();
     fetchActivities();

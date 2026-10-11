@@ -40,7 +40,9 @@ const useCustomerStore = create((set, get) => ({
   //update customer
   updateCustomer: async (documentId, updatedCustomer) => {
     const exist = get().customers.some(
-      (c) => c.phone === updatedCustomer.phone,
+      (customer) =>
+        customer.documentId !== documentId &&
+        customer.phone === updatedCustomer.phone,
     );
     if (exist) {
       notify("error", "مشتری با این شماره تماس قبلاً وجود دارد");

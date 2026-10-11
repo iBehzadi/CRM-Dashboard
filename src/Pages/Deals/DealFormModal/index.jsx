@@ -23,8 +23,7 @@ const DealFormModal = ({
 }) => {
   const editingDeal = Boolean(deal);
 
-  const toman = (n) =>
-    `${Number(n || 0).toLocaleString("fa-IR")} تومان`;
+  const toman = (n) => `${Number(n || 0).toLocaleString("fa-IR")} تومان`;
 
   const formik = useFormik({
     initialValues: {
@@ -39,9 +38,7 @@ const DealFormModal = ({
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      title: Yup.string()
-        .trim()
-        .required("عنوان معامله الزامی است"),
+      title: Yup.string().trim().required("عنوان معامله الزامی است"),
 
       amount: Yup.number()
         .typeError("مبلغ را به عدد وارد کنید")
@@ -63,28 +60,25 @@ const DealFormModal = ({
         description: values.description,
       };
 
-      const stageChanged =
-        !deal || deal.stage !== values.stage;
+      const stageChanged = !deal || deal.stage !== values.stage;
 
       if (stageChanged) {
-        Object.assign(
-          payload,
-          stageChanges(values.stage, values.lostReason),
-        );
+        Object.assign(payload, stageChanges(values.stage, values.lostReason));
       } else {
         payload.stage = values.stage;
-        payload.lostReason =
-          values.stage === "lost" ? values.lostReason : "";
+        payload.lostReason = values.stage === "lost" ? values.lostReason : "";
       }
 
       try {
         if (deal) {
-          await onUpdate(deal.documentId, payload);
+          const res = await onUpdate(deal.documentId, payload);
+          if (res === null) return null;
+          onClose();
         } else {
-          await onCreate(payload);
+          const res = await onCreate(payload);
+          if (res === null) return false;
+          onClose();
         }
-
-        onClose();
       } catch {
         // خطا توسط fetchData/store نمایش داده می‌شود.
         // Modal باز می‌ماند تا اطلاعات کاربر از بین نرود.
@@ -94,17 +88,12 @@ const DealFormModal = ({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-      <div
-        onClick={onClose}
-        className="absolute inset-0 bg-black/40"
-      />
+      <div onClick={onClose} className="absolute inset-0 bg-black/40" />
 
       <div className="relative w-full max-w-lg max-h-full overflow-y-auto bg-white rounded-2xl shadow-xl">
         <div className="flex items-center justify-between p-5 border-b border-blue-400">
           <div>
-            <h2>
-              {editingDeal ? "ویرایش معامله" : "افزودن معامله"}
-            </h2>
+            <h2>{editingDeal ? "ویرایش معامله" : "افزودن معامله"}</h2>
             <p className="text-sm text-gray-500 mt-1">
               اطلاعات معامله را وارد کنید
             </p>
@@ -119,10 +108,7 @@ const DealFormModal = ({
           </button>
         </div>
 
-        <form
-          onSubmit={formik.handleSubmit}
-          className="p-5 space-y-4"
-        >
+        <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               عنوان <span className="text-red-400">*</span>
@@ -139,9 +125,7 @@ const DealFormModal = ({
             />
 
             {formik.touched.title && formik.errors.title && (
-              <p className="mt-1 text-xs text-red-500">
-                {formik.errors.title}
-              </p>
+              <p className="mt-1 text-xs text-red-500">{formik.errors.title}</p>
             )}
           </div>
 
@@ -160,10 +144,7 @@ const DealFormModal = ({
               <option value="">انتخاب مشتری</option>
 
               {customers.map((customer) => (
-                <option
-                  key={customer.documentId}
-                  value={customer.documentId}
-                >
+                <option key={customer.documentId} value={customer.documentId}>
                   {customer.name}
                 </option>
               ))}
@@ -172,28 +153,23 @@ const DealFormModal = ({
             {customers.length === 0 && (
               <p className="mt-1 text-xs text-gray-500">
                 هنوز مشتری‌ای ندارید.{" "}
-                <Link
-                  to="/customers"
-                  className="text-blue-600 hover:underline"
-                >
+                <Link to="/customers" className="text-blue-600 hover:underline">
                   ابتدا یک مشتری ثبت کنید
                 </Link>
               </p>
             )}
 
-            {formik.touched.customer &&
-              formik.errors.customer && (
-                <p className="mt-1 text-xs text-red-500">
-                  {formik.errors.customer}
-                </p>
-              )}
+            {formik.touched.customer && formik.errors.customer && (
+              <p className="mt-1 text-xs text-red-500">
+                {formik.errors.customer}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                مبلغ (تومان){" "}
-                <span className="text-red-400">*</span>
+                مبلغ (تومان) <span className="text-red-400">*</span>
               </label>
 
               <input
@@ -207,19 +183,17 @@ const DealFormModal = ({
                 className={inputClass}
               />
 
-              {formik.values.amount !== "" &&
-                !formik.errors.amount && (
-                  <p className="mt-1 text-xs text-gray-500">
-                    {toman(formik.values.amount)}
-                  </p>
-                )}
+              {formik.values.amount !== "" && !formik.errors.amount && (
+                <p className="mt-1 text-xs text-gray-500">
+                  {toman(formik.values.amount)}
+                </p>
+              )}
 
-              {formik.touched.amount &&
-                formik.errors.amount && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {formik.errors.amount}
-                  </p>
-                )}
+              {formik.touched.amount && formik.errors.amount && (
+                <p className="mt-1 text-xs text-red-500">
+                  {formik.errors.amount}
+                </p>
+              )}
             </div>
 
             <div>

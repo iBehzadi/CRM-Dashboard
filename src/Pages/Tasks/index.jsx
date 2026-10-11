@@ -86,11 +86,14 @@ const Tasks = () => {
       };
       try {
         if (editingTask) {
-          await updateTask(editingTask.documentId, payload);
+          const res = await updateTask(editingTask.documentId, payload);
+          if (res === null) return;
+          closeModal();
         } else {
-          await createTask(payload);
+          const res = await createTask(payload);
+          if (res === null) return;
+          closeModal();
         }
-        closeModal();
       } catch {
         // پیام خطا را fetchData نشان داده؛ مودال باز می‌ماند تا اطلاعات از بین نرود
       }
@@ -222,7 +225,10 @@ const Tasks = () => {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-gray-500">
+                  <td
+                    colSpan={5}
+                    className="px-5 py-10 text-center text-gray-500"
+                  >
                     در حال بارگذاری...
                   </td>
                 </tr>
@@ -230,7 +236,10 @@ const Tasks = () => {
 
               {!loading && filteredTasks.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={5}
+                    className="px-5 py-12 text-center text-gray-500"
+                  >
                     {tasks.length === 0
                       ? "هنوز وظیفه‌ای ثبت نشده است"
                       : "وظیفه‌ای با این فیلترها پیدا نشد"}
@@ -312,16 +321,20 @@ const Tasks = () => {
                     <td className="px-5 py-4">
                       <select
                         value={task.customerStatus || "todo"}
-                        onChange={(e) => handleStatusChange(task, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusChange(task, e.target.value)
+                        }
                         className={`px-3 py-1 rounded-full text-xs outline-none cursor-pointer ${
                           statusStyles[task.customerStatus] || statusStyles.todo
                         }`}
                       >
-                        {Object.entries(statusTranslate).map(([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
+                        {Object.entries(statusTranslate).map(
+                          ([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ),
+                        )}
                       </select>
                     </td>
 
@@ -390,7 +403,9 @@ const Tasks = () => {
                   className={inputClass}
                 />
                 {formik.touched.title && formik.errors.title && (
-                  <p className="mt-1 text-xs text-red-500">{formik.errors.title}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {formik.errors.title}
+                  </p>
                 )}
               </div>
 
@@ -485,7 +500,10 @@ const Tasks = () => {
                   >
                     <option value="">بدون مشتری</option>
                     {customers.map((customer) => (
-                      <option key={customer.documentId} value={customer.documentId}>
+                      <option
+                        key={customer.documentId}
+                        value={customer.documentId}
+                      >
                         {customer.name}
                       </option>
                     ))}
