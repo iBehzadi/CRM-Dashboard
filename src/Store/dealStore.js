@@ -6,7 +6,6 @@ const useDealStore = create((set, get) => ({
   deals: [],
   loading: false,
 
-
   fetchDeals: async ({ silent = false } = {}) => {
     if (!silent) set({ loading: true });
     try {
@@ -37,6 +36,7 @@ const useDealStore = create((set, get) => ({
     } catch (error) {
       notify("error", "خطا در ایجاد معامله");
       console.error(error);
+      throw error;
     } finally {
       set({ loading: false });
     }

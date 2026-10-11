@@ -36,7 +36,9 @@ export default function Sales() {
   const sales = useMemo(() => {
     return deals.filter((deal) => {
       const matchSearch =
-        deal.title.includes(search) || deal.customer.name.includes(search);
+        (deal.title || "").includes(search) ||
+        (deal.customer?.name || "").includes(search);
+
       if (deal.stage !== "won" && deal.stage !== "lost") {
         return false;
       }
@@ -95,7 +97,7 @@ export default function Sales() {
       monthCount: monthSales.length,
       averageSales: monthSales.length ? totalMonthSales / monthSales.length : 0,
     };
-  }, [sales]);
+  }, [deals]);
 
   useEffect(() => {
     fetchDeals();
@@ -320,7 +322,7 @@ export default function Sales() {
 
                     <td className="px-5 py-4">
                       <span
-                        className={`inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-medium  ${statusStyles[sale.stage]}`}
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium  ${statusStyles[sale.stage]}`}
                       >
                         {statusTranslate[sale.stage]}
                       </span>
@@ -349,10 +351,7 @@ export default function Sales() {
         <SaleFormModal
           customers={customers}
           onClose={() => setShowSaleModal(false)}
-          onCreate={async (payload) => {
-            await createDeal(payload);
-            await fetchDeals();
-          }}
+          onCreate={async (payload) => await createDeal(payload)}
         />
       )}
     </div>
