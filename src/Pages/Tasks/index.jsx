@@ -46,6 +46,7 @@ const Tasks = () => {
   const updateTask = useTaskStore((state) => state.updateTask);
   const removeTask = useTaskStore((state) => state.removeTask);
 
+
   const leads = useLeadStore((state) => state.leads);
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
@@ -56,6 +57,7 @@ const Tasks = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
+  
   useEffect(() => {
     fetchTasks();
     fetchCustomers({ silent: true });
@@ -78,7 +80,6 @@ const Tasks = () => {
       customerStatus: Yup.string().required("وضعیت را انتخاب کنید"),
     }),
     onSubmit: async (values) => {
-      // رابطه‌ی خالی باید null باشد تا Strapi آن را قطع کند
       const payload = {
         ...values,
         lead: values.lead || null,
@@ -95,12 +96,10 @@ const Tasks = () => {
           closeModal();
         }
       } catch {
-        // پیام خطا را fetchData نشان داده؛ مودال باز می‌ماند تا اطلاعات از بین نرود
       }
     },
   });
 
-  // تنها راه بستن مودال: فرم و حالت ویرایش را هم ریست می‌کند
   const closeModal = () => {
     setShowModal(false);
     setEditingTask(null);

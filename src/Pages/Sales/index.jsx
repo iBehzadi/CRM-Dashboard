@@ -279,21 +279,16 @@ export default function Sales() {
           <table className="w-full min-w-[850px] text-right">
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
-                {[
-                  "مشتری",
-                  "عنوان معامله",
-                  "مبلغ",
-                  "کارشناس",
-                  "وضعیت",
-                  "تاریخ",
-                ].map((title) => (
-                  <th
-                    key={title}
-                    className="px-5 py-4 text-sm font-medium text-gray-500"
-                  >
-                    {title}
-                  </th>
-                ))}
+                {["مشتری", "عنوان معامله", "مبلغ", "وضعیت", "تاریخ"].map(
+                  (title) => (
+                    <th
+                      key={title}
+                      className="px-5 py-4 text-sm font-medium text-gray-500"
+                    >
+                      {title}
+                    </th>
+                  ),
+                )}
               </tr>
             </thead>
 
@@ -314,10 +309,6 @@ export default function Sales() {
 
                     <td className="whitespace-nowrap px-5 py-4 text-gray-700">
                       {formatPrice(sale.amount)}
-                    </td>
-
-                    <td className="px-5 py-4 text-gray-600">
-                      {sale.expert?.name || "—"}
                     </td>
 
                     <td className="px-5 py-4">
