@@ -30,7 +30,7 @@ export default function Activities() {
       date: act.date,
       type: act.type,
       lead: act.lead?.documentId || "",
-      customer: act.customer?.documentId || "",
+      // customer: act.customer?.documentId || "",
     });
 
     setShowModal(true);
@@ -50,6 +50,7 @@ export default function Activities() {
       type: Yup.string().required("نوع فعالیت را انتخاب کنید"),
       title: Yup.string().required("عنوان الزامی است"),
       date: Yup.string().required("تاریخ الزامی است"),
+      lead : Yup.string().required('سرنخ الزامی است')
     }),
 
     onSubmit: async (values) => {
@@ -215,7 +216,7 @@ export default function Activities() {
       {/* Activities Table */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[850px] text-right">
+          <table className="w-full min-w-212.5 text-right">
             <thead>
               <tr className="bg-gray-50/80 text-gray-700 text-sm border-b border-gray-200">
                 <th className="px-5 py-4 font-semibold">#</th>
@@ -426,6 +427,11 @@ export default function Activities() {
                       </option>
                     ))}
                   </select>
+                  {formik.touched.lead && formik.errors.lead && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.lead}
+                    </p>
+                  )}
                 </div>
 
                 {/* <div>

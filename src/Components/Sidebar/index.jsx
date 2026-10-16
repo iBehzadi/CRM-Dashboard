@@ -19,7 +19,7 @@ const menuItems = [
   { title: "وظایف", icon: FiCheckSquare, path: "tasks" },
   { title: "فعالیت‌ها", icon: FiActivity, path: "activities" },
   { title: "فروش‌ها", icon: FiShoppingBag, path: "sales" },
-  { title: "تنظیمات", icon: FiSettings, path: "settings" },
+  // { title: "تنظیمات", icon: FiSettings, path: "settings" },
 ];
 
 const Sidebar = ({ open, onCloseMenu }) => {

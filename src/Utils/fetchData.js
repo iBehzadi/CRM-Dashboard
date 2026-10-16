@@ -15,14 +15,11 @@ const fetchData = async (url, options = {}) => {
   try {
     res = await fetch(finalUrl, finalOption);
   } catch (error) {
-    // سرور خاموش است یا اینترنت قطع است
     const message = "ارتباط با سرور برقرار نشد";
     notify("error", message);
     throw new Error(message);
   }
 
-  // اول متن را می‌خوانیم و بعد تلاش می‌کنیم JSON بشود.
-  // اگر سرور HTML برگرداند (مثلاً خطای 502)، برنامه با SyntaxError نمی‌ترکد.
   const text = await res.text();
   let data = null;
   if (text) {
@@ -35,11 +32,12 @@ const fetchData = async (url, options = {}) => {
 
   if (!res.ok) {
     const message = data?.error?.message || "خطایی در درخواست رخ داده است";
-    notify("error", message);
+    // notify("error", message);
+    console.log(message)
     throw new Error(message);
   }
 
-  return data;
+  return data
 };
 
 export default fetchData;

@@ -6,6 +6,7 @@ import Deals from "./Deals";
 import Sales from "./Sales";
 import Settings from "./Settings";
 import Activities from "./Activities";
+import Auth from "./Auth";
 export {
   Leads,
   Dashboard,
@@ -15,4 +16,5 @@ export {
   Sales,
   Settings,
   Activities,
+  Auth,
 };

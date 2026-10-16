@@ -9,50 +9,60 @@ import {
   Activities,
   Sales,
   Settings,
+  Auth,
 } from "../Pages";
 import LeadDetails from "../Pages/Leads/LeadDetails";
+import ProtectedRoute from "../Components/ProtectedRoute";
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Layout />,
+    path: "/auth",
+    element: <Auth />,
+  },
+  {
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <Dashboard />,
+        path: "/",
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+          {
+            path: "leads",
+            element: <Leads />,
+          },
+          {
+            path: "leads/:id",
+            element: <LeadDetails />,
+          },
+          {
+            path: "customers",
+            element: <Customers />,
+          },
+          {
+            path: "deals",
+            element: <Deals />,
+          },
+          {
+            path: "tasks",
+            element: <Tasks />,
+          },
+          {
+            path: "activities",
+            element: <Activities />,
+          },
+          {
+            path: "sales",
+            element: <Sales />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
       },
-      {
-        path: "leads",
-        element: <Leads />,
-      },
-      {
-        path: "leads/:id",
-        element: <LeadDetails />,
-      },
-      {
-        path: "customers",
-        element: <Customers />,
-      },
-      {
-        path: "deals",
-        element: <Deals />,
-      },
-      {
-        path: "tasks",
-        element: <Tasks />,
-      },
-      {
-        path: "activities",
-        element: <Activities />,
-      },
-      {
-        path: "sales",
-        element: <Sales />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
-      },
-      
     ],
   },
 ]);

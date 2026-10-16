@@ -276,7 +276,7 @@ export default function Sales() {
       {/* Sales table */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[850px] text-right">
+          <table className="w-full min-w-212.5 text-right">
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
                 {["مشتری", "عنوان معامله", "مبلغ", "وضعیت", "تاریخ"].map(

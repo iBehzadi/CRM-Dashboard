@@ -5,12 +5,12 @@ import {
   FiUser,
   FiChevronDown,
   FiMenu,
-
 } from "react-icons/fi";
+import useAuthStore from "../../Store/authStore";
 
-
-const Navbar = ({onMenuClick}) => {
-
+const Navbar = ({ onMenuClick }) => {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   return (
     <>
       <nav className="fixed top-0 right-0 left-0 lg:right-64 z-50 h-16 bg-white border-b border-gray-200 px-4 sm:px-6 flex items-center justify-between gap-4">
@@ -54,30 +54,44 @@ const Navbar = ({onMenuClick}) => {
           </button>
 
           {/* Profile */}
-          <button className="flex items-center gap-2">
+          <button className="flex items-center gap-2 group relative">
             <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
               <FiUser className="text-blue-600" size={20} />
             </div>
 
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-gray-800">
-                بهزاد صادقی
+                {user?.username || "ورود"}
               </p>
 
-              <p className="text-xs text-gray-500">
-                کارشناس فروش
-              </p>
+              {user ? (
+                <p className="text-xs text-gray-500">کارشناس فروش</p>
+              ) : (
+                ""
+              )}
             </div>
 
-            <FiChevronDown
-              size={16}
-              className="hidden sm:block text-gray-400"
-            />
+            {user ? (
+              <>
+                <FiChevronDown
+                  size={16}
+                  className="hidden sm:block text-gray-400"
+                />
+                <div className="absolute left-0 top-10 z-50 w-35 origin-top overflow-hidden rounded-md bg-gray-200 opacity-0 invisible scale-y-0 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:scale-y-100">
+                  <a
+                    onClick={logout}
+                    className=" h-10 w-full transition-colors duration-200 hover:bg-gray-200 cursor-pointer flex items-center justify-center"
+                  >
+                    خروج
+                  </a>
+                </div>
+              </>
+            ) : (
+              ""
+            )}
           </button>
         </div>
       </nav>
-
-     
     </>
   );
 };
