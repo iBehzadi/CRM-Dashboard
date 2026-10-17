@@ -199,7 +199,7 @@ export default function Login({ handlePage }) {
         </div>
 
         {/* بخش معرفی CRM */}
-        <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 p-10 text-white md:flex lg:p-14">
+        <div className="relative hidden flex-col justify-between overflow-hidden bg-linear-to-br from-blue-700 via-blue-600 to-indigo-800 p-10 text-white md:flex lg:p-14">
           <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -bottom-24 -left-20 h-80 w-80 rounded-full bg-indigo-400/20 blur-3xl" />
 

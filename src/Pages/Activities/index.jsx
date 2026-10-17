@@ -207,7 +207,7 @@ export default function Activities() {
       {/* Activities Table */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[850px] text-right">
+          <table className="w-full min-w-212.5 text-right">
             <thead>
               <tr className="bg-gray-50/80 text-gray-700 text-sm border-b border-gray-200 dark:bg-[#111827] dark:text-[#F1F5F9] dark:border-[#2A3548]">
                 <th className="px-5 py-4 font-semibold">#</th>
@@ -305,7 +305,7 @@ export default function Activities() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
           <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
 

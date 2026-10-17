@@ -163,7 +163,7 @@ const Customers = () => {
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] text-right">
+          <table className="w-full min-w-175 text-right">
             <thead className="bg-gray-50 border-b border-gray-200 dark:bg-[#111827] dark:border-[#2A3548]">
               <tr>
                 {["نام", "شماره تماس", "ایمیل", "منبع", "تاریخ ثبت", ""].map(
@@ -278,7 +278,7 @@ const Customers = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           <div
             onClick={closeModal}
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"

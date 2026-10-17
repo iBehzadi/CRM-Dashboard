@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiMoreVertical, FiX } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useLeadStore from "../../Store/leadStore";
 import notify from "../../Utils/notify";
 
@@ -40,7 +40,7 @@ const Leads = () => {
   const updateLead = useLeadStore((state) => state.updateLead);
   const removeLead = useLeadStore((state) => state.removeLead);
   const leads = useLeadStore((state) => state.leads);
-
+  const fetchLeads = useLeadStore((state) => state.fetchLeads);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -128,6 +128,9 @@ const Leads = () => {
     removeLead(documentId).catch(() => {});
   };
 
+  useEffect(() => {
+    fetchLeads();
+  },[fetchLeads]);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -362,8 +365,7 @@ const Leads = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
-                    نام و نام خانوادگی{" "}
-                    <span className="text-red-400">*</span>
+                    نام و نام خانوادگی <span className="text-red-400">*</span>
                   </label>
 
                   <input
