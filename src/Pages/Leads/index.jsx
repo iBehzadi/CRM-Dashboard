@@ -205,7 +205,7 @@ const Leads = () => {
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-175">
             <thead className="bg-gray-50 border-b border-gray-200 dark:bg-[#111827] dark:border-[#2A3548]">
               <tr>
                 <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
@@ -327,7 +327,7 @@ const Leads = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           {/* Overlay */}
           <div
             onClick={closeModal}

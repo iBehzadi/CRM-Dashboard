@@ -214,7 +214,7 @@ const Tasks = () => {
       {/* Table */}
       <div className="bg-[#172033] rounded-xl border border-[#2A3548] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
+          <table className="w-full min-w-200">
             <thead>
               <tr className="border-b border-[#2A3548] text-right bg-[#111827]/70">
                 {["عنوان", "تاریخ سررسید", "اولویت", "وضعیت", ""].map(
@@ -386,7 +386,7 @@ const Tasks = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           <div
             onClick={closeModal}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
