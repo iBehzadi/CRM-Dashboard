@@ -42,18 +42,26 @@ const Sidebar = ({ open, onCloseMenu }) => {
           h-screen
           w-64
           bg-white
-          border-gray-200
-          transition-transform
+          border-l border-gray-200
+          transition-all
           duration-300
+          dark:bg-[#111827]
+          dark:text-[#F1F5F9]
+          dark:border-[#2A3548]
           ${open ? "translate-x-0" : "translate-x-full"}
           lg:translate-x-0
         `}
       >
         {/* Header */}
-        <div className="h-16 px-5 flex border-b border-gray-200 items-center justify-between">
-          <h1 className="text-xl font-bold text-blue-600">CRM</h1>
+        <div className="h-16 px-5 flex border-b border-gray-200 items-center justify-between dark:bg-[#111827] dark:border-[#2A3548]">
+          <h1 className="text-xl font-bold text-blue-600 dark:text-[#818CF8]">
+            CRM
+          </h1>
 
-          <button onClick={onCloseMenu} className="lg:hidden text-gray-500">
+          <button
+            onClick={onCloseMenu}
+            className="lg:hidden text-gray-500 hover:text-blue-600 dark:text-[#94A3B8] dark:hover:text-blue-400"
+          >
             <FiX size={22} />
           </button>
         </div>
@@ -67,20 +75,20 @@ const Sidebar = ({ open, onCloseMenu }) => {
                   to={path}
                   onClick={onCloseMenu}
                   className={({ isActive }) => `
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-4
-                  py-3
-                  rounded-lg
-                  transition
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
-                  }
-                `}
+                    w-full
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    transition-colors
+                    ${
+                      isActive
+                        ? "bg-blue-50 text-blue-600 dark:bg-[#243247] dark:text-[#818CF8]"
+                        : "text-gray-600 hover:bg-blue-50 hover:text-blue-600 dark:text-[#94A3B8] dark:hover:bg-[#172033] dark:hover:text-[#F1F5F9]"
+                    }
+                  `}
                 >
                   <Icon size={20} className="shrink-0" />
 

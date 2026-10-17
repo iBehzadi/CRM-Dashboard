@@ -1,25 +1,24 @@
+
 import React, { useState } from "react";
+import { Navigate } from "react-router-dom";
+import useAuthStore from "../../Store/authStore";
 import Login from "./Login";
 import Register from "./Register";
-import { Navigate } from "react-router-dom";
 
 export default function Auth() {
   const [page, setPage] = useState("login");
 
-  const handlePageType = (pg) => {
-    setPage(pg);
-  };
-  const auth = JSON.parse(localStorage.getItem("auth"));
-  if (auth) {
-    return <Navigate to={"/"} />;
+  const isAuthenticated = useAuthStore(
+    (state) => state.isAuthenticated
+  );
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
   }
-  return (
-    <>
-      {page === "login" ? (
-        <Login handlePage={handlePageType} />
-      ) : (
-        <Register handlePage={handlePageType} />
-      )}
-    </>
+
+  return page === "login" ? (
+    <Login handlePage={setPage} />
+  ) : (
+    <Register handlePage={setPage} />
   );
 }

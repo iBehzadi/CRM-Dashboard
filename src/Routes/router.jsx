@@ -10,6 +10,7 @@ import {
   Sales,
   Settings,
   Auth,
+  NotFound,
 } from "../Pages";
 import LeadDetails from "../Pages/Leads/LeadDetails";
 import ProtectedRoute from "../Components/ProtectedRoute";
@@ -65,5 +66,9 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path:'*',
+    element:<NotFound />
+  }
 ]);
 export default router;

@@ -11,7 +11,7 @@ const stages = [
 ];
 
 const inputClass =
-  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]";
 
 const DealFormModal = ({
   deal,
@@ -87,14 +87,23 @@ const DealFormModal = ({
   });
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-      <div onClick={onClose} className="absolute inset-0 bg-black/40" />
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      {/* Overlay */}
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm dark:bg-black/60"
+      />
 
-      <div className="relative w-full max-w-lg max-h-full overflow-y-auto bg-white rounded-2xl shadow-xl">
-        <div className="flex items-center justify-between p-5 border-b border-blue-400">
+      {/* Modal */}
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl dark:bg-[#172033] dark:border dark:border-[#2A3548]">
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-[#2A3548]">
           <div>
-            <h2>{editingDeal ? "ویرایش معامله" : "افزودن معامله"}</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 className="font-semibold text-gray-800 dark:text-[#F1F5F9]">
+              {editingDeal ? "ویرایش معامله" : "افزودن معامله"}
+            </h2>
+
+            <p className="text-sm text-gray-500 dark:text-[#94A3B8] mt-1">
               اطلاعات معامله را وارد کنید
             </p>
           </div>
@@ -102,15 +111,16 @@ const DealFormModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition dark:text-[#94A3B8] dark:hover:bg-[#243247]"
           >
             <FiX size={20} />
           </button>
         </div>
 
         <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
+          {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
               عنوان <span className="text-red-400">*</span>
             </label>
 
@@ -129,8 +139,9 @@ const DealFormModal = ({
             )}
           </div>
 
+          {/* Customer */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
               مشتری <span className="text-red-400">*</span>
             </label>
 
@@ -151,9 +162,12 @@ const DealFormModal = ({
             </select>
 
             {customers.length === 0 && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
                 هنوز مشتری‌ای ندارید.{" "}
-                <Link to="/customers" className="text-blue-600 hover:underline">
+                <Link
+                  to="/customers"
+                  className="text-blue-600 hover:underline dark:text-[#818CF8]"
+                >
                   ابتدا یک مشتری ثبت کنید
                 </Link>
               </p>
@@ -166,9 +180,10 @@ const DealFormModal = ({
             )}
           </div>
 
+          {/* Amount & Stage */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                 مبلغ (تومان) <span className="text-red-400">*</span>
               </label>
 
@@ -184,7 +199,7 @@ const DealFormModal = ({
               />
 
               {formik.values.amount !== "" && !formik.errors.amount && (
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
                   {toman(formik.values.amount)}
                 </p>
               )}
@@ -197,7 +212,7 @@ const DealFormModal = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                 مرحله
               </label>
 
@@ -217,8 +232,9 @@ const DealFormModal = ({
             </div>
           </div>
 
+          {/* Expected Close Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
               تاریخ پیش‌بینی بسته شدن
             </label>
 
@@ -232,9 +248,10 @@ const DealFormModal = ({
             />
           </div>
 
+          {/* Lost Reason */}
           {formik.values.stage === "lost" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                 دلیل ناموفق بودن
               </label>
 
@@ -250,8 +267,9 @@ const DealFormModal = ({
             </div>
           )}
 
+          {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
               توضیحات
             </label>
 
@@ -262,15 +280,16 @@ const DealFormModal = ({
               onBlur={formik.handleBlur}
               rows="3"
               placeholder="توضیحات معامله..."
-              className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none resize-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-blue-400">
+          {/* Footer */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-[#2A3548]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+              className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition dark:border-[#2A3548] dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
             >
               انصراف
             </button>
@@ -278,7 +297,7 @@ const DealFormModal = ({
             <button
               type="submit"
               disabled={formik.isSubmitting}
-              className="px-5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {formik.isSubmitting
                 ? "در حال ذخیره ..."

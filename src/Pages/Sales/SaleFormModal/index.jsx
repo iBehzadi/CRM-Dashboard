@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 
 const inputClass =
-  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100 dark:placeholder:text-slate-500";
 
 const SaleFormModal = ({ customers, onClose, onCreate }) => {
   const toman = (n) => `${Number(n || 0).toLocaleString("fa-IR")} تومان`;
@@ -53,19 +53,24 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
   });
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-      <div onClick={onClose} className="absolute inset-0 bg-black/40" />
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/40 dark:bg-black/70"
+      />
 
       <div
         dir="rtl"
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl dark:border dark:border-[#2A3548] dark:bg-[#172033]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-blue-400">
+        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-[#2A3548]">
           <div>
-            <h2 className="font-semibold text-gray-800">ثبت فروش جدید</h2>
+            <h2 className="font-semibold text-gray-800 dark:text-slate-100">
+              ثبت فروش جدید
+            </h2>
 
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
               اطلاعات فروش را وارد کنید
             </p>
           </div>
@@ -73,7 +78,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-[#243247]"
           >
             <FiX size={20} />
           </button>
@@ -83,7 +88,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
         <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
           {/* عنوان */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">
               عنوان فروش <span className="text-red-400">*</span>
             </label>
 
@@ -104,7 +109,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
 
           {/* مشتری */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">
               مشتری <span className="text-red-400">*</span>
             </label>
 
@@ -125,9 +130,12 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
             </select>
 
             {customers.length === 0 && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
                 هنوز مشتری‌ای ندارید.{" "}
-                <Link to="/customers" className="text-blue-600 hover:underline">
+                <Link
+                  to="/customers"
+                  className="text-indigo-600 hover:underline dark:text-indigo-400"
+                >
                   ابتدا یک مشتری ثبت کنید
                 </Link>
               </p>
@@ -143,7 +151,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
           {/* مبلغ و تاریخ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">
                 مبلغ فروش (تومان) <span className="text-red-400">*</span>
               </label>
 
@@ -159,7 +167,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
               />
 
               {formik.values.amount !== "" && !formik.errors.amount && (
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
                   {toman(formik.values.amount)}
                 </p>
               )}
@@ -172,7 +180,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">
                 تاریخ فروش
               </label>
 
@@ -195,7 +203,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
 
           {/* توضیحات */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">
               توضیحات
             </label>
 
@@ -206,16 +214,16 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
               onBlur={formik.handleBlur}
               rows="3"
               placeholder="توضیحات مربوط به فروش..."
-              className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+              className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 p-3 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100 dark:placeholder:text-slate-500"
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-blue-400">
+          <div className="flex justify-end gap-3 border-t border-gray-200 pt-4 dark:border-[#2A3548]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+              className="rounded-lg border border-gray-200 px-4 py-2.5 text-gray-600 transition hover:bg-gray-50 dark:border-[#2A3548] dark:text-slate-300 dark:hover:bg-[#243247]"
             >
               انصراف
             </button>
@@ -223,7 +231,7 @@ const SaleFormModal = ({ customers, onClose, onCreate }) => {
             <button
               type="submit"
               disabled={formik.isSubmitting}
-              className="px-5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-indigo-600 px-5 py-2.5 text-white transition hover:bg-indigo-700 disabled:opacity-50"
             >
               {formik.isSubmitting ? "در حال ثبت..." : "ثبت فروش"}
             </button>

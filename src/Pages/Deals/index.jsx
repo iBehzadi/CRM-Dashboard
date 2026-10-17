@@ -96,10 +96,13 @@ const Deals = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">معاملات</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
+            معاملات
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-[#94A3B8]">
             پیگیری فرصت‌های فروش در مرحله‌های مختلف
           </p>
         </div>
@@ -109,51 +112,64 @@ const Deals = () => {
             setEditingDeal(null);
             setShowModal(true);
           }}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
           افزودن معامله
         </button>
       </div>
 
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">معاملات فعال</p>
-          <p className="mt-2 text-2xl font-bold text-gray-800">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 transition dark:bg-[#172033] dark:border-[#2A3548]">
+          <p className="text-sm text-gray-500 dark:text-[#94A3B8]">
+            معاملات فعال
+          </p>
+          <p className="mt-2 text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
             {summary.activeCount.toLocaleString("fa-IR")}
           </p>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
             {toman(summary.activeSum)}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">فروش این ماه</p>
-          <p className="mt-2 text-2xl font-bold text-green-600">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 transition dark:bg-[#172033] dark:border-[#2A3548]">
+          <p className="text-sm text-gray-500 dark:text-[#94A3B8]">
+            فروش این ماه
+          </p>
+          <p className="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
             {toman(summary.wonThisMonth)}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">نرخ موفقیت</p>
-          <p className="mt-2 text-2xl font-bold text-gray-800">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 transition dark:bg-[#172033] dark:border-[#2A3548]">
+          <p className="text-sm text-gray-500 dark:text-[#94A3B8]">
+            نرخ موفقیت
+          </p>
+          <p className="mt-2 text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
             {summary.winRate.toLocaleString("fa-IR")}٪
           </p>
-          <p className="mt-1 text-xs text-gray-500">موفق نسبت به بسته‌شده‌ها</p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
+            موفق نسبت به بسته‌شده‌ها
+          </p>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      {/* Search */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4 dark:bg-[#172033] dark:border-[#2A3548]">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="جستجوی عنوان معامله یا نام مشتری..."
-          className="w-full h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
         />
       </div>
 
+      {/* Pipeline */}
       {loading ? (
-        <p className="py-10 text-center text-gray-500">در حال بارگذاری...</p>
+        <p className="py-10 text-center text-gray-500 dark:text-[#94A3B8]">
+          در حال بارگذاری...
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
           {stages.map((stage) => {
@@ -163,7 +179,7 @@ const Deals = () => {
             return (
               <div
                 key={stage.key}
-                className="bg-gray-50 border border-gray-200 rounded-xl p-3"
+                className="bg-gray-50 border border-gray-200 rounded-xl p-3 dark:bg-[#111827] dark:border-[#2A3548]"
               >
                 <div className="px-1 pb-3">
                   <div className="flex items-center justify-between">
@@ -171,20 +187,24 @@ const Deals = () => {
                       <span
                         className={`w-2.5 h-2.5 rounded-full ${stage.dot}`}
                       />
-                      <h2 className="font-bold text-gray-800">{stage.label}</h2>
+                      <h2 className="font-bold text-gray-800 dark:text-[#F1F5F9]">
+                        {stage.label}
+                      </h2>
                     </div>
 
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-[#94A3B8]">
                       {list.length.toLocaleString("fa-IR")}
                     </span>
                   </div>
 
-                  <p className="mt-1 text-xs text-gray-500">{toman(total)}</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
+                    {toman(total)}
+                  </p>
                 </div>
 
                 <div className="space-y-3">
                   {list.length === 0 && (
-                    <p className="py-6 text-center text-sm text-gray-400">
+                    <p className="py-6 text-center text-sm text-gray-400 dark:text-[#64748B]">
                       معامله‌ای نیست
                     </p>
                   )}
@@ -206,6 +226,7 @@ const Deals = () => {
         </div>
       )}
 
+      {/* Deal Form Modal */}
       {showModal && (
         <DealFormModal
           deal={editingDeal}

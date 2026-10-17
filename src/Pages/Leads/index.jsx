@@ -9,23 +9,32 @@ import useLeadStore from "../../Store/leadStore";
 import notify from "../../Utils/notify";
 
 const statusStyles = {
-  new: "bg-blue-50 text-blue-600",
-  following: "bg-yellow-50 text-yellow-600",
-  negotiation: "bg-purple-50 text-purple-600",
-  converted: "bg-green-50 text-green-600",
+  new: "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300",
+  following:
+    "bg-yellow-50 text-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-300",
+  negotiation:
+    "bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-300",
+  converted:
+    "bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-300",
 };
+
 const statusTranslate = {
   new: "جدید",
   following: "درحال پیگیری",
   negotiation: "مذاکره",
   converted: "تبدیل‌شده",
 };
+
 const sourceTranslate = {
   instagram: "اینستاگرام",
   website: "وبسایت",
   referral: "معرفی",
   advertisement: "تبلیغات",
 };
+
+const inputClass =
+  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]";
+
 const Leads = () => {
   const createLead = useLeadStore((state) => state.createLead);
   const updateLead = useLeadStore((state) => state.updateLead);
@@ -36,34 +45,7 @@ const Leads = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
-
   const [editingLead, setEditingLead] = useState(null);
-
-  const handleEdit = (lead) => {
-    setEditingLead(lead);
-
-    formik.setValues({
-      name: lead.name,
-      phone: lead.phone,
-      email: lead.email || "",
-      source: lead.source,
-      date: lead.date,
-      leadStatus: lead.leadStatus,
-      description: lead.description || "",
-    });
-
-    setShowModal(true);
-  };
-
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.name.includes(search) || lead.phone.includes(search);
-    const matchesStatus =
-      statusFilter === "all" || lead.leadStatus === statusFilter;
-    const matchesSource =
-      sourceFilter === "all" || lead.source === sourceFilter;
-    return matchesSearch && matchesStatus && matchesSource;
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -103,6 +85,38 @@ const Leads = () => {
     },
   });
 
+  const handleEdit = (lead) => {
+    setEditingLead(lead);
+
+    formik.setValues({
+      name: lead.name,
+      phone: lead.phone,
+      email: lead.email || "",
+      source: lead.source,
+      date: lead.date,
+      leadStatus: lead.leadStatus,
+      description: lead.description || "",
+    });
+
+    setShowModal(true);
+  };
+
+  const filteredLeads = leads.filter((lead) => {
+    const q = search.trim().toLowerCase();
+
+    const matchesSearch =
+      (lead.name || "").toLowerCase().includes(q) ||
+      (lead.phone || "").includes(search.trim());
+
+    const matchesStatus =
+      statusFilter === "all" || lead.leadStatus === statusFilter;
+
+    const matchesSource =
+      sourceFilter === "all" || lead.source === sourceFilter;
+
+    return matchesSearch && matchesStatus && matchesSource;
+  });
+
   const closeModal = () => {
     setShowModal(false);
     setEditingLead(null);
@@ -110,6 +124,7 @@ const Leads = () => {
   };
 
   const handleRemove = (documentId) => {
+    if (!window.confirm("از حذف این سرنخ مطمئن هستید؟")) return;
     removeLead(documentId).catch(() => {});
   };
 
@@ -118,16 +133,22 @@ const Leads = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">سرنخ‌ها</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
+            سرنخ‌ها
+          </h1>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-[#94A3B8]">
             مدیریت و پیگیری مشتریان بالقوه
           </p>
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          onClick={() => {
+            setEditingLead(null);
+            formik.resetForm();
+            setShowModal(true);
+          }}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
           <FiPlus size={18} />
           افزودن سرنخ
@@ -135,12 +156,12 @@ const Leads = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
             <FiSearch
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#64748B]"
               size={18}
             />
 
@@ -149,19 +170,7 @@ const Leads = () => {
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="جستجوی نام یا شماره تماس..."
-              className="
-                w-full
-                h-10
-                pr-10
-                pl-4
-                rounded-lg
-                bg-gray-50
-                border
-                border-gray-200
-                outline-none
-                focus:ring-2
-                focus:ring-blue-500
-              "
+              className="w-full h-10 pr-10 pl-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
             />
           </div>
 
@@ -169,15 +178,7 @@ const Leads = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="
-              h-10
-              px-4
-              rounded-lg
-              bg-gray-50
-              border
-              border-gray-200
-              outline-none
-            "
+            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9]"
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="new">جدید</option>
@@ -190,15 +191,7 @@ const Leads = () => {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="
-              h-10
-              px-4
-              rounded-lg
-              bg-gray-50
-              border
-              border-gray-200
-              outline-none
-            "
+            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9]"
           >
             <option value="all">همه منابع</option>
             <option value="instagram">اینستاگرام</option>
@@ -210,28 +203,28 @@ const Leads = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-xl ">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-175">
-            <thead className="bg-gray-50 border-b border-gray-200">
+          <table className="w-full min-w-[700px]">
+            <thead className="bg-gray-50 border-b border-gray-200 dark:bg-[#111827] dark:border-[#2A3548]">
               <tr>
-                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500">
+                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
                   نام
                 </th>
 
-                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500">
+                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
                   شماره تماس
                 </th>
 
-                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500">
+                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
                   منبع
                 </th>
 
-                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500">
+                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
                   وضعیت
                 </th>
 
-                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500">
+                <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]">
                   تاریخ
                 </th>
 
@@ -239,83 +232,118 @@ const Leads = () => {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-gray-100 dark:divide-[#2A3548]">
               {filteredLeads.map((lead) => (
                 <tr
                   key={lead.documentId}
-                  className="border-b border-gray-100 hover:bg-gray-50"
+                  className="hover:bg-gray-50 transition-colors dark:hover:bg-[#243247]"
                 >
-                  <td className="px-5 py-4 font-medium text-gray-800">
+                  <td className="px-5 py-4 font-medium">
                     <Link
                       to={`/leads/${lead.documentId}`}
-                      className="font-medium text-blue-600 hover:underline"
+                      className="font-medium text-blue-600 hover:underline dark:text-[#818CF8]"
                     >
                       {lead.name}
                     </Link>
                   </td>
 
-                  <td className="px-5 py-4 text-gray-600">{lead.phone}</td>
+                  <td className="px-5 py-4 text-gray-600 dark:text-[#CBD5E1]">
+                    {lead.phone}
+                  </td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    {sourceTranslate[lead.source]}
+                  <td className="px-5 py-4 text-gray-600 dark:text-[#CBD5E1]">
+                    {sourceTranslate[lead.source] || "-"}
                   </td>
 
                   <td className="px-5 py-4">
                     <span
-                      className={`
-                        inline-flex
-                        px-3
-                        py-1
-                        rounded-full
-                        text-xs
-                        font-medium
-                        ${statusStyles[lead.leadStatus]}
-                      `}
+                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                        statusStyles[lead.leadStatus] ||
+                        "bg-gray-100 text-gray-600 dark:bg-[#243247] dark:text-[#CBD5E1]"
+                      }`}
                     >
-                      {statusTranslate[lead.leadStatus]}
+                      {statusTranslate[lead.leadStatus] || "نامشخص"}
                     </span>
                   </td>
 
-                  <td className="px-5 py-4 text-gray-500">{lead.date}</td>
+                  <td className="px-5 py-4 text-gray-500 dark:text-[#94A3B8]">
+                    {lead.date || "-"}
+                  </td>
 
                   <td className="px-5 py-4">
-                    <button className="group relative text-gray-500 hover:text-blue-600">
-                      <FiMoreVertical size={20} />
-                      <div className="absolute shadow bg-white invisible h-0 group-hover:visible flex flex-col justify-center text-[12px] rounded w-20 group-hover:h-auto -top-15 py-3 px-2 items-center">
-                        <span
-                          className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
-                          onClick={() => handleRemove(lead.documentId)}
-                        >
-                          <MdDelete className="text-red-500" /> حذف
-                        </span>
-                        <span
-                          className="text-black bg-gray-100 w-full py-2 mb-1 flex items-center justify-center gap-1 hover:bg-blue-400 hover:text-white rounded"
-                          onClick={() => handleEdit(lead)}
-                        >
-                          <FaEdit className="text-green-500" /> ویرایش
-                        </span>
-                      </div>
-                    </button>
+                    <div className="relative flex justify-center">
+                      <details className="relative group">
+                        <summary className="list-none cursor-pointer flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition dark:text-[#94A3B8] dark:hover:bg-[#243247] dark:hover:text-[#818CF8]">
+                          <FiMoreVertical size={20} />
+                        </summary>
+
+                        <div className="absolute left-0 top-full mt-1 z-20 w-32 p-1 rounded-lg border border-gray-200 bg-white shadow-lg dark:bg-[#172033] dark:border-[#2A3548]">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.currentTarget.closest("details").open = false;
+                              handleEdit(lead);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
+                          >
+                            <FaEdit className="text-green-500" />
+                            ویرایش
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.currentTarget.closest("details").open = false;
+                              handleRemove(lead.documentId);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-red-50 transition dark:text-[#CBD5E1] dark:hover:bg-red-950/40"
+                          >
+                            <MdDelete className="text-red-500" />
+                            حذف
+                          </button>
+                        </div>
+                      </details>
+                    </div>
                   </td>
                 </tr>
               ))}
+
+              {filteredLeads.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-5 py-12 text-center text-sm text-gray-500 dark:text-[#94A3B8]"
+                  >
+                    {leads.length === 0
+                      ? "هنوز سرنخی ثبت نشده است."
+                      : "سرنخی با این مشخصات پیدا نشد."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
+      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           {/* Overlay */}
-          <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
+          <div
+            onClick={closeModal}
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm dark:bg-black/60"
+          />
 
-          {/* Modal */}
-          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
+          {/* Modal Content */}
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl dark:bg-[#172033] dark:border dark:border-[#2A3548]">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-blue-400">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-[#2A3548]">
               <div>
-                <h2>{editingLead ? "ویرایش سرنخ" : "افزودن سرنخ"}</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="font-semibold text-gray-800 dark:text-[#F1F5F9]">
+                  {editingLead ? "ویرایش سرنخ" : "افزودن سرنخ"}
+                </h2>
+
+                <p className="text-sm text-gray-500 mt-1 dark:text-[#94A3B8]">
                   اطلاعات مشتری بالقوه را وارد کنید
                 </p>
               </div>
@@ -323,7 +351,7 @@ const Leads = () => {
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition dark:text-[#94A3B8] dark:hover:bg-[#243247]"
               >
                 <FiX size={20} />
               </button>
@@ -333,8 +361,9 @@ const Leads = () => {
             <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    نام و نام خانوادگی <span className="text-red-400">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
+                    نام و نام خانوادگی{" "}
+                    <span className="text-red-400">*</span>
                   </label>
 
                   <input
@@ -344,7 +373,7 @@ const Leads = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     placeholder="مثلاً علی رضایی"
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   />
 
                   {formik.touched.name && formik.errors.name && (
@@ -355,7 +384,7 @@ const Leads = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
                     شماره تماس <span className="text-red-400">*</span>
                   </label>
 
@@ -366,7 +395,7 @@ const Leads = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     placeholder="مثلاً 09331234567"
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   />
 
                   {formik.touched.phone && formik.errors.phone && (
@@ -378,7 +407,7 @@ const Leads = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
                   ایمیل
                 </label>
 
@@ -389,7 +418,7 @@ const Leads = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="example@gmail.com"
-                  className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                  className={inputClass}
                 />
 
                 {formik.touched.email && formik.errors.email && (
@@ -398,9 +427,10 @@ const Leads = () => {
                   </p>
                 )}
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  تاریخ
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
+                  تاریخ <span className="text-red-400">*</span>
                 </label>
 
                 <input
@@ -409,7 +439,7 @@ const Leads = () => {
                   value={formik.values.date}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                  className={inputClass}
                 />
 
                 {formik.touched.date && formik.errors.date && (
@@ -421,7 +451,7 @@ const Leads = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
                     منبع سرنخ <span className="text-red-400">*</span>
                   </label>
 
@@ -430,7 +460,7 @@ const Leads = () => {
                     value={formik.values.source}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   >
                     <option value="">انتخاب منبع</option>
                     <option value="instagram">اینستاگرام</option>
@@ -447,7 +477,7 @@ const Leads = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
                     وضعیت
                   </label>
 
@@ -456,7 +486,7 @@ const Leads = () => {
                     value={formik.values.leadStatus}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   >
                     <option value="new">جدید</option>
                     <option value="following">در حال پیگیری</option>
@@ -469,7 +499,7 @@ const Leads = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-[#CBD5E1]">
                   توضیحات
                 </label>
 
@@ -480,28 +510,30 @@ const Leads = () => {
                   onBlur={formik.handleBlur}
                   rows="3"
                   placeholder="توضیحات مربوط به این سرنخ..."
-                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none resize-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
                 />
               </div>
-              <div className="flex justify-end gap-3 p-5 border-t border-blue-400">
+
+              {/* Footer */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-[#2A3548]">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition dark:border-[#2A3548] dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
                 >
                   انصراف
                 </button>
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition"
                   disabled={formik.isSubmitting}
                 >
                   {!formik.isSubmitting
                     ? editingLead
                       ? "ذخیره تغییرات"
                       : "ذخیره سرنخ"
-                    : "درحال ذخیره ..."}
+                    : "در حال ذخیره..."}
                 </button>
               </div>
             </form>

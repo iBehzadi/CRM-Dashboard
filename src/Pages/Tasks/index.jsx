@@ -8,11 +8,16 @@ import useTaskStore from "../../Store/taskStore";
 import useLeadStore from "../../Store/leadStore";
 import useCustomerStore from "../../Store/customerStore";
 
-const priorityTranslate = { low: "کم", medium: "متوسط", high: "بالا" };
+const priorityTranslate = {
+  low: "کم",
+  medium: "متوسط",
+  high: "بالا",
+};
+
 const priorityStyles = {
-  low: "bg-gray-50 text-gray-600",
-  medium: "bg-yellow-50 text-yellow-600",
-  high: "bg-red-50 text-red-600",
+  low: "bg-slate-500/15 text-slate-400",
+  medium: "bg-yellow-500/15 text-yellow-400",
+  high: "bg-red-500/15 text-red-400",
 };
 
 const statusTranslate = {
@@ -20,16 +25,18 @@ const statusTranslate = {
   doing: "در حال انجام",
   done: "انجام شده",
 };
+
 const statusStyles = {
-  todo: "bg-gray-100 text-gray-600",
-  doing: "bg-blue-50 text-blue-600",
-  done: "bg-green-50 text-green-600",
+  todo: "bg-slate-500/15 text-slate-400",
+  doing: "bg-blue-500/15 text-blue-400",
+  done: "bg-green-500/15 text-green-400",
 };
 
 const inputClass =
-  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full h-11 px-3 rounded-lg border border-[#2A3548] bg-[#0B1120] text-slate-100 placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition";
 
-// dueDate در Strapi میلادی ذخیره می‌شود (YYYY-MM-DD) و فقط موقع نمایش شمسی می‌شود
+const labelClass = "block text-sm font-medium text-slate-300 mb-2";
+
 const formatDate = (d) =>
   d ? new Date(`${d}T00:00:00`).toLocaleDateString("fa-IR") : "-";
 
@@ -46,7 +53,6 @@ const Tasks = () => {
   const updateTask = useTaskStore((state) => state.updateTask);
   const removeTask = useTaskStore((state) => state.removeTask);
 
-
   const leads = useLeadStore((state) => state.leads);
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
@@ -57,7 +63,6 @@ const Tasks = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
-  
   useEffect(() => {
     fetchTasks();
     fetchCustomers({ silent: true });
@@ -85,6 +90,7 @@ const Tasks = () => {
         lead: values.lead || null,
         customer: values.customer || null,
       };
+
       try {
         if (editingTask) {
           const res = await updateTask(editingTask.documentId, payload);
@@ -95,8 +101,7 @@ const Tasks = () => {
           if (res === null) return;
           closeModal();
         }
-      } catch {
-      }
+      } catch {}
     },
   });
 
@@ -108,6 +113,7 @@ const Tasks = () => {
 
   const handleEdit = (task) => {
     setEditingTask(task);
+
     formik.setValues({
       title: task.title,
       description: task.description || "",
@@ -117,6 +123,7 @@ const Tasks = () => {
       lead: task.lead?.documentId || "",
       customer: task.customer?.documentId || "",
     });
+
     setShowModal(true);
   };
 
@@ -136,21 +143,22 @@ const Tasks = () => {
       statusFilter === "all" || t.customerStatus === statusFilter;
     const matchesPriority =
       priorityFilter === "all" || t.priority === priorityFilter;
+
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">وظایف</h1>
-          <p className="mt-1 text-sm text-gray-500">مدیریت و پیگیری وظایف</p>
+          <h1 className="text-2xl font-bold text-slate-100">وظایف</h1>
+          <p className="mt-1 text-sm text-slate-400">مدیریت و پیگیری وظایف</p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/10"
         >
           <FiPlus size={18} />
           افزودن وظیفه
@@ -158,26 +166,27 @@ const Tasks = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="bg-[#172033] border border-[#2A3548] rounded-xl p-4">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <FiSearch
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
               size={18}
             />
+
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="جستجوی عنوان وظیفه..."
-              className="w-full h-10 pr-10 pl-4 rounded-lg bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 pr-10 pl-4 rounded-lg bg-[#0B1120] text-slate-100 placeholder:text-slate-500 border border-[#2A3548] outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 outline-none"
+            className="h-10 px-4 rounded-lg bg-[#0B1120] text-slate-200 border border-[#2A3548] outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">همه وضعیت‌ها</option>
             {Object.entries(statusTranslate).map(([value, label]) => (
@@ -190,7 +199,7 @@ const Tasks = () => {
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 outline-none"
+            className="h-10 px-4 rounded-lg bg-[#0B1120] text-slate-200 border border-[#2A3548] outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">همه اولویت‌ها</option>
             {Object.entries(priorityTranslate).map(([value, label]) => (
@@ -203,16 +212,16 @@ const Tasks = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-[#172033] rounded-xl border border-[#2A3548] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-200">
+          <table className="w-full min-w-[800px]">
             <thead>
-              <tr className="border-b border-gray-200 text-right">
+              <tr className="border-b border-[#2A3548] text-right bg-[#111827]/70">
                 {["عنوان", "تاریخ سررسید", "اولویت", "وضعیت", ""].map(
                   (title, i) => (
                     <th
                       key={i}
-                      className="px-5 py-4 text-sm font-medium text-gray-500"
+                      className="px-5 py-4 text-sm font-medium text-slate-400"
                     >
                       {title}
                     </th>
@@ -226,7 +235,7 @@ const Tasks = () => {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-10 text-center text-gray-500"
+                    className="px-5 py-10 text-center text-slate-400"
                   >
                     در حال بارگذاری...
                   </td>
@@ -237,7 +246,7 @@ const Tasks = () => {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-12 text-center text-gray-500"
+                    className="px-5 py-12 text-center text-slate-400"
                   >
                     {tasks.length === 0
                       ? "هنوز وظیفه‌ای ثبت نشده است"
@@ -250,39 +259,43 @@ const Tasks = () => {
                 filteredTasks.map((task) => (
                   <tr
                     key={task.documentId}
-                    className="border-b border-gray-100 last:border-0"
+                    className="border-b border-[#2A3548]/70 last:border-0 hover:bg-[#243247]/40 transition-colors"
                   >
                     {/* عنوان */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 shrink-0 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <div className="w-9 h-9 shrink-0 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
                           <FiCheckSquare />
                         </div>
-                        <div>
+
+                        <div className="min-w-0">
                           <p
                             className={`font-medium ${
                               task.customerStatus === "done"
-                                ? "text-gray-400 line-through"
-                                : "text-gray-800"
+                                ? "text-slate-500 line-through"
+                                : "text-slate-100"
                             }`}
                           >
                             {task.title}
                           </p>
+
                           {task.description && (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-slate-400 mt-1">
                               {task.description}
                             </p>
                           )}
+
                           {task.lead && (
                             <Link
                               to={`/leads/${task.lead.documentId}`}
-                              className="text-xs text-blue-600 hover:underline"
+                              className="inline-block text-xs text-indigo-400 hover:text-indigo-300 hover:underline mt-1"
                             >
                               سرنخ: {task.lead.name}
                             </Link>
                           )}
+
                           {task.customer && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-slate-400 mt-1">
                               مشتری: {task.customer.name}
                             </p>
                           )}
@@ -294,13 +307,14 @@ const Tasks = () => {
                     <td className="px-5 py-4">
                       <div
                         className={`flex items-center gap-2 text-sm ${
-                          isOverdue(task) ? "text-red-600" : "text-gray-600"
+                          isOverdue(task) ? "text-red-400" : "text-slate-300"
                         }`}
                       >
-                        <FiClock />
+                        <FiClock className="shrink-0" />
                         {formatDate(task.dueDate)}
+
                         {isOverdue(task) && (
-                          <span className="text-xs">(گذشته)</span>
+                          <span className="text-xs text-red-400">(گذشته)</span>
                         )}
                       </div>
                     </td>
@@ -316,20 +330,24 @@ const Tasks = () => {
                       </span>
                     </td>
 
-                    {/* وضعیت (قابل تغییر مستقیم) */}
+                    {/* وضعیت */}
                     <td className="px-5 py-4">
                       <select
                         value={task.customerStatus || "todo"}
                         onChange={(e) =>
                           handleStatusChange(task, e.target.value)
                         }
-                        className={`px-3 py-1 rounded-full text-xs outline-none cursor-pointer ${
+                        className={`px-3 py-1 rounded-full text-xs outline-none cursor-pointer border border-transparent ${
                           statusStyles[task.customerStatus] || statusStyles.todo
                         }`}
                       >
                         {Object.entries(statusTranslate).map(
                           ([value, label]) => (
-                            <option key={value} value={value}>
+                            <option
+                              key={value}
+                              value={value}
+                              className="bg-[#172033] text-slate-100"
+                            >
                               {label}
                             </option>
                           ),
@@ -344,15 +362,16 @@ const Tasks = () => {
                           type="button"
                           title="ویرایش"
                           onClick={() => handleEdit(task)}
-                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition"
+                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition"
                         >
                           <FaEdit size={15} />
                         </button>
+
                         <button
                           type="button"
                           title="حذف"
                           onClick={() => handleRemove(task)}
-                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white transition"
+                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white transition"
                         >
                           <FaTrash size={15} />
                         </button>
@@ -367,21 +386,29 @@ const Tasks = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-          <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            onClick={closeModal}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
 
-          <div className="relative w-full max-w-lg max-h-full overflow-y-auto bg-white rounded-2xl shadow-xl">
-            <div className="flex items-center justify-between p-5 border-b border-blue-400">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#172033] border border-[#2A3548] rounded-2xl shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-[#2A3548]">
               <div>
-                <h2>{editingTask ? "ویرایش وظیفه" : "افزودن وظیفه"}</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="text-lg font-bold text-slate-100">
+                  {editingTask ? "ویرایش وظیفه" : "افزودن وظیفه"}
+                </h2>
+
+                <p className="text-sm text-slate-400 mt-1">
                   اطلاعات وظیفه را وارد کنید
                 </p>
               </div>
+
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-[#243247] hover:text-white transition"
               >
                 <FiX size={20} />
               </button>
@@ -389,9 +416,10 @@ const Tasks = () => {
 
             <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
                   عنوان <span className="text-red-400">*</span>
                 </label>
+
                 <input
                   type="text"
                   name="title"
@@ -401,8 +429,9 @@ const Tasks = () => {
                   placeholder="مثلاً تماس با مشتری"
                   className={inputClass}
                 />
+
                 {formik.touched.title && formik.errors.title && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {formik.errors.title}
                   </p>
                 )}
@@ -410,9 +439,10 @@ const Tasks = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={labelClass}>
                     تاریخ سررسید <span className="text-red-400">*</span>
                   </label>
+
                   <input
                     type="date"
                     name="dueDate"
@@ -421,17 +451,17 @@ const Tasks = () => {
                     onBlur={formik.handleBlur}
                     className={inputClass}
                   />
+
                   {formik.touched.dueDate && formik.errors.dueDate && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-red-400">
                       {formik.errors.dueDate}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    اولویت
-                  </label>
+                  <label className={labelClass}>اولویت</label>
+
                   <select
                     name="priority"
                     value={formik.values.priority}
@@ -440,7 +470,11 @@ const Tasks = () => {
                     className={inputClass}
                   >
                     {Object.entries(priorityTranslate).map(([value, label]) => (
-                      <option key={value} value={value}>
+                      <option
+                        key={value}
+                        value={value}
+                        className="bg-[#172033] text-slate-100"
+                      >
                         {label}
                       </option>
                     ))}
@@ -449,9 +483,8 @@ const Tasks = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وضعیت
-                </label>
+                <label className={labelClass}>وضعیت</label>
+
                 <select
                   name="customerStatus"
                   value={formik.values.customerStatus}
@@ -460,7 +493,11 @@ const Tasks = () => {
                   className={inputClass}
                 >
                   {Object.entries(statusTranslate).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option
+                      key={value}
+                      value={value}
+                      className="bg-[#172033] text-slate-100"
+                    >
                       {label}
                     </option>
                   ))}
@@ -469,9 +506,8 @@ const Tasks = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    سرنخ مرتبط
-                  </label>
+                  <label className={labelClass}>سرنخ مرتبط</label>
+
                   <select
                     name="lead"
                     value={formik.values.lead}
@@ -479,8 +515,13 @@ const Tasks = () => {
                     className={inputClass}
                   >
                     <option value="">بدون سرنخ</option>
+
                     {leads.map((lead) => (
-                      <option key={lead.documentId} value={lead.documentId}>
+                      <option
+                        key={lead.documentId}
+                        value={lead.documentId}
+                        className="bg-[#172033] text-slate-100"
+                      >
                         {lead.name}
                       </option>
                     ))}
@@ -488,9 +529,8 @@ const Tasks = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    مشتری مرتبط
-                  </label>
+                  <label className={labelClass}>مشتری مرتبط</label>
+
                   <select
                     name="customer"
                     value={formik.values.customer}
@@ -498,10 +538,12 @@ const Tasks = () => {
                     className={inputClass}
                   >
                     <option value="">بدون مشتری</option>
+
                     {customers.map((customer) => (
                       <option
                         key={customer.documentId}
                         value={customer.documentId}
+                        className="bg-[#172033] text-slate-100"
                       >
                         {customer.name}
                       </option>
@@ -511,9 +553,8 @@ const Tasks = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  توضیحات
-                </label>
+                <label className={labelClass}>توضیحات</label>
+
                 <textarea
                   name="description"
                   value={formik.values.description}
@@ -521,22 +562,23 @@ const Tasks = () => {
                   onBlur={formik.handleBlur}
                   rows="3"
                   placeholder="توضیحات وظیفه..."
-                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 rounded-lg border border-[#2A3548] bg-[#0B1120] text-slate-100 placeholder:text-slate-500 outline-none resize-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-blue-400">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#2A3548]">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2.5 rounded-lg border border-[#2A3548] text-slate-300 hover:bg-[#243247] transition"
                 >
                   انصراف
                 </button>
+
                 <button
                   type="submit"
                   disabled={formik.isSubmitting}
-                  className="px-5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                   {formik.isSubmitting
                     ? "در حال ذخیره ..."

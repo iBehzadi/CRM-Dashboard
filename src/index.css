@@ -1,9 +1,29 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
 html {
   direction: rtl;
 }
-
+@layer base {
+  body,
+  div,
+  header,
+  aside,
+  main,
+  section,
+  nav,
+  button,
+  input,
+  textarea,
+  select,
+  table,
+  th,
+  td {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
+}
 @font-face {
   font-family: "Estedad";
   src:

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -14,7 +15,7 @@ const sourceTranslate = {
 };
 
 const inputClass =
-  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none focus:ring-2 focus:ring-blue-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]";
 
 const formatDate = (iso) =>
   iso ? new Date(iso).toLocaleDateString("fa-IR") : "-";
@@ -55,7 +56,7 @@ const Customers = () => {
         if (editingCustomer) {
           const result = await updateCustomer(
             editingCustomer.documentId,
-            values,
+            values
           );
           if (result === null) return;
           closeModal();
@@ -98,7 +99,10 @@ const Customers = () => {
       (c.name || "").includes(q) ||
       (c.phone || "").includes(q) ||
       (c.email || "").includes(q);
-    const matchesSource = sourceFilter === "all" || c.source === sourceFilter;
+
+    const matchesSource =
+      sourceFilter === "all" || c.source === sourceFilter;
+
     return matchesSearch && matchesSource;
   });
 
@@ -107,8 +111,10 @@ const Customers = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">مشتریان</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
+            مشتریان
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-[#94A3B8]">
             مدیریت اطلاعات مشتریان شما
           </p>
         </div>
@@ -123,11 +129,11 @@ const Customers = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <FiSearch
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#64748B]"
               size={18}
             />
             <input
@@ -135,14 +141,14 @@ const Customers = () => {
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="جستجوی نام، شماره تماس یا ایمیل..."
-              className="w-full h-10 pr-10 pl-4 rounded-lg bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 pr-10 pl-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none focus:ring-2 focus:ring-blue-500 dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
             />
           </div>
 
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 outline-none"
+            className="h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 outline-none dark:bg-[#111827] dark:border-[#2A3548] dark:text-[#F1F5F9]"
           >
             <option value="all">همه منابع</option>
             {Object.entries(sourceTranslate).map(([value, label]) => (
@@ -155,30 +161,30 @@ const Customers = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-175">
-            <thead className="bg-gray-50 border-b border-gray-200">
+          <table className="w-full min-w-[700px] text-right">
+            <thead className="bg-gray-50 border-b border-gray-200 dark:bg-[#111827] dark:border-[#2A3548]">
               <tr>
                 {["نام", "شماره تماس", "ایمیل", "منبع", "تاریخ ثبت", ""].map(
                   (title, i) => (
                     <th
                       key={i}
-                      className="px-5 py-4 text-right text-sm font-medium text-gray-500"
+                      className="px-5 py-4 text-right text-sm font-medium text-gray-500 dark:text-[#94A3B8]"
                     >
                       {title}
                     </th>
-                  ),
+                  )
                 )}
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-gray-100 dark:divide-[#2A3548]">
               {loading && (
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-gray-500"
+                    className="px-5 py-10 text-center text-gray-500 dark:text-[#94A3B8]"
                   >
                     در حال بارگذاری...
                   </td>
@@ -188,14 +194,17 @@ const Customers = () => {
               {!loading && filteredCustomers.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-5 py-12 text-center">
-                    <FiUsers className="mx-auto text-gray-300" size={32} />
-                    <p className="mt-3 text-gray-600">
+                    <FiUsers
+                      className="mx-auto text-gray-300 dark:text-[#475569]"
+                      size={32}
+                    />
+                    <p className="mt-3 text-gray-600 dark:text-[#CBD5E1]">
                       {customers.length === 0
                         ? "هنوز مشتری‌ای ثبت نشده است"
                         : "مشتری‌ای با این فیلترها پیدا نشد"}
                     </p>
                     {customers.length === 0 && (
-                      <p className="mt-1 text-sm text-gray-400">
+                      <p className="mt-1 text-sm text-gray-400 dark:text-[#94A3B8]">
                         مشتری جدید اضافه کنید یا یک سرنخ را به مشتری تبدیل کنید.
                       </p>
                     )}
@@ -207,48 +216,54 @@ const Customers = () => {
                 filteredCustomers.map((customer) => (
                   <tr
                     key={customer.documentId}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors dark:border-[#2A3548] dark:hover:bg-[#243247]"
                   >
                     <td className="px-5 py-4">
-                      <p className="font-medium text-gray-800">
+                      <p className="font-medium text-gray-800 dark:text-[#F1F5F9]">
                         {customer.name}
                       </p>
                       {customer.lead && (
                         <Link
                           to={`/leads/${customer.lead.documentId}`}
-                          className="text-xs text-blue-600 hover:underline"
+                          className="text-xs text-blue-600 hover:underline dark:text-[#818CF8]"
                         >
                           مشاهده سرنخ اولیه
                         </Link>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-gray-600">
+
+                    <td className="px-5 py-4 text-gray-600 dark:text-[#CBD5E1]">
                       {customer.phone}
                     </td>
-                    <td className="px-5 py-4 text-gray-600">
+
+                    <td className="px-5 py-4 text-gray-600 dark:text-[#CBD5E1]">
                       {customer.email || "-"}
                     </td>
-                    <td className="px-5 py-4 text-gray-600">
+
+                    <td className="px-5 py-4 text-gray-600 dark:text-[#CBD5E1]">
                       {sourceTranslate[customer.source] || "-"}
                     </td>
-                    <td className="px-5 py-4 text-gray-500">
+
+                    <td className="px-5 py-4 text-gray-500 dark:text-[#94A3B8]">
                       {formatDate(customer.createdAt)}
                     </td>
+
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           title="ویرایش"
                           onClick={() => handleEdit(customer)}
-                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition"
+                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-900 dark:hover:bg-blue-600 dark:hover:text-white"
                         >
                           <FaEdit size={15} />
                         </button>
+
                         <button
                           type="button"
                           title="حذف"
                           onClick={() => handleRemove(customer)}
-                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white transition"
+                          className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white transition dark:bg-red-950/40 dark:text-red-300 dark:border-red-900 dark:hover:bg-red-600 dark:hover:text-white"
                         >
                           <FaTrash size={15} />
                         </button>
@@ -263,21 +278,27 @@ const Customers = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-          <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            onClick={closeModal}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          />
 
-          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
-            <div className="flex items-center justify-between p-5 border-b border-blue-400">
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl dark:bg-[#172033] dark:border dark:border-[#2A3548]">
+            <div className="flex items-center justify-between p-5 border-b border-blue-400 dark:border-[#2A3548]">
               <div>
-                <h2>{editingCustomer ? "ویرایش مشتری" : "افزودن مشتری"}</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="font-semibold text-gray-800 dark:text-[#F1F5F9]">
+                  {editingCustomer ? "ویرایش مشتری" : "افزودن مشتری"}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-[#94A3B8] mt-1">
                   اطلاعات مشتری را وارد کنید
                 </p>
               </div>
+
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-[#94A3B8] dark:hover:bg-[#243247]"
               >
                 <FiX size={20} />
               </button>
@@ -286,7 +307,7 @@ const Customers = () => {
             <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     نام و نام خانوادگی <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -306,7 +327,7 @@ const Customers = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     شماره تماس <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -328,7 +349,7 @@ const Customers = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     ایمیل
                   </label>
                   <input
@@ -348,7 +369,7 @@ const Customers = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     منبع <span className="text-red-400">*</span>
                   </label>
                   <select
@@ -374,7 +395,7 @@ const Customers = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                   توضیحات
                 </label>
                 <textarea
@@ -384,18 +405,19 @@ const Customers = () => {
                   onBlur={formik.handleBlur}
                   rows="3"
                   placeholder="توضیحات مربوط به این مشتری..."
-                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none resize-none focus:ring-2 focus:ring-blue-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-blue-400">
+              <div className="flex justify-end gap-3 pt-4 border-t border-blue-400 dark:border-[#2A3548]">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-[#2A3548] dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
                 >
                   انصراف
                 </button>
+
                 <button
                   type="submit"
                   disabled={formik.isSubmitting}

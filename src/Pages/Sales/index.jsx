@@ -9,10 +9,12 @@ import { SlBasket } from "react-icons/sl";
 import { IoWalletOutline } from "react-icons/io5";
 
 const statusStyles = {
-  won: "bg-green-50 text-green-600",
-  lost: "bg-red-50 text-red-600",
-  waiting: "bg-yellow-50 text-yellow-600",
+  won: "bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-400",
+  lost: "bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400",
+  waiting:
+    "bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-400",
 };
+
 const statusTranslate = {
   won: "موفق",
   lost: "ناموفق",
@@ -32,7 +34,7 @@ export default function Sales() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  //filter and sort
+  // filter and sort
   const sales = useMemo(() => {
     return deals.filter((deal) => {
       const matchSearch =
@@ -42,12 +44,14 @@ export default function Sales() {
       if (deal.stage !== "won" && deal.stage !== "lost") {
         return false;
       }
+
       if (stageFilter !== "all" && deal.stage !== stageFilter) {
         return false;
       }
 
       if (!deal.closedAt) return false;
       const date = deal.closedAt.slice(0, 10);
+
       return (
         (!fromDate || date >= fromDate) &&
         (!toDate || date <= toDate) &&
@@ -65,6 +69,7 @@ export default function Sales() {
     const todaySales = salesData.filter((sale) => {
       if (!sale.closedAt) return false;
       const date = new Date(sale.closedAt);
+
       return (
         date.getDate() === now.getDate() &&
         date.getMonth() === currentMonth &&
@@ -75,6 +80,7 @@ export default function Sales() {
     const monthSales = salesData.filter((sale) => {
       if (!sale.closedAt) return false;
       const date = new Date(sale.closedAt);
+
       return (
         date.getMonth() === currentMonth && date.getFullYear() === currentYear
       );
@@ -95,7 +101,9 @@ export default function Sales() {
       totalMonthSales,
       todayCount: todaySales.length,
       monthCount: monthSales.length,
-      averageSales: monthSales.length ? totalMonthSales / monthSales.length : 0,
+      averageSales: monthSales.length
+        ? totalMonthSales / monthSales.length
+        : 0,
     };
   }, [deals]);
 
@@ -108,19 +116,22 @@ export default function Sales() {
     `${Number(amount || 0).toLocaleString("fa-IR")} تومان`;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-gray-800 dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">فروش</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-slate-100">
+            فروش
+          </h1>
+
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
             مدیریت فروش و اطلاعات مشتریان
           </p>
         </div>
 
         <button
           onClick={() => setShowSaleModal(true)}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-700"
         >
           <FiPlus />
           ثبت فروش
@@ -133,57 +144,58 @@ export default function Sales() {
           {
             title: "فروش امروز",
             value: formatPrice(summary.totalTodaySales),
-            iconBg: "bg-amber-100",
-            iconColor: "text-amber-500",
-            border: "border-amber-200",
-            bg: "bg-amber-50",
+            iconBg: "bg-amber-100 dark:bg-amber-500/15",
+            iconColor: "text-amber-500 dark:text-amber-400",
+            border: "border-amber-200 dark:border-amber-500/20",
+            bg: "bg-amber-50 dark:bg-[#172033]",
             icon: MdOutlineWbSunny,
           },
           {
             title: "فروش این ماه",
             value: formatPrice(summary.totalMonthSales),
-            iconBg: "bg-blue-100",
-            iconColor: "text-blue-500",
-            border: "border-blue-200",
-            bg: "bg-blue-50",
+            iconBg: "bg-blue-100 dark:bg-blue-500/15",
+            iconColor: "text-blue-500 dark:text-blue-400",
+            border: "border-blue-200 dark:border-blue-500/20",
+            bg: "bg-blue-50 dark:bg-[#172033]",
             icon: FcFilledFilter,
           },
           {
             title: "تعداد فروش این ماه",
             value: `${summary.monthCount.toLocaleString("fa-IR")} فروش`,
-            iconBg: "bg-green-100",
-            iconColor: "text-green-500",
-            border: "border-green-200",
-            bg: "bg-green-50",
+            iconBg: "bg-green-100 dark:bg-green-500/15",
+            iconColor: "text-green-500 dark:text-green-400",
+            border: "border-green-200 dark:border-green-500/20",
+            bg: "bg-green-50 dark:bg-[#172033]",
             icon: SlBasket,
           },
           {
             title: "میانگین فروش این ماه",
             value: formatPrice(summary.averageSales),
-            iconBg: "bg-purple-100",
-            iconColor: "text-purple-500",
-            border: "border-purple-200",
-            bg: "bg-purple-50",
+            iconBg: "bg-purple-100 dark:bg-purple-500/15",
+            iconColor: "text-purple-500 dark:text-purple-400",
+            border: "border-purple-200 dark:border-purple-500/20",
+            bg: "bg-purple-50 dark:bg-[#172033]",
             icon: IoWalletOutline,
           },
         ].map((card) => {
           const Icon = card.icon;
+
           return (
             <div
               key={card.title}
-              className={`rounded-xl border ${card.border} ${card.bg} p-4`}
+              className={`rounded-xl border ${card.border} ${card.bg} p-4 transition-colors`}
             >
               <div className="flex items-center justify-between gap-2">
-                <h2 className="text-sm font-medium text-gray-700">
+                <h2 className="text-sm font-medium text-gray-700 dark:text-slate-300">
                   {card.title}
                 </h2>
 
                 <Icon
                   className={`h-11 w-11 shrink-0 rounded-full ${card.iconBg} p-2 text-3xl ${card.iconColor}`}
-                ></Icon>
+                />
               </div>
 
-              <h3 className="mt-4 wrap-break-word text-lg font-bold text-gray-800">
+              <h3 className="mt-4 wrap-break-word text-lg font-bold text-gray-800 dark:text-slate-100">
                 {card.value}
               </h3>
             </div>
@@ -192,48 +204,60 @@ export default function Sales() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-[#2A3548] dark:bg-[#172033]">
         <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-end">
           <div className="flex flex-col gap-2 text-sm">
-            <label htmlFor="salesStatus" className="text-gray-700">
+            <label
+              htmlFor="salesStatus"
+              className="text-gray-700 dark:text-slate-300"
+            >
               وضعیت
             </label>
+
             <select
               id="salesStatus"
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value)}
-              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100"
             >
-              <option value="all"> همه</option>
-              <option value="won"> موفق</option>
+              <option value="all">همه</option>
+              <option value="won">موفق</option>
               <option value="lost">ناموفق</option>
               <option value="waiting">در انتظار پرداخت</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2 text-sm">
-            <label htmlFor="fromDate" className="text-gray-700">
+            <label
+              htmlFor="fromDate"
+              className="text-gray-700 dark:text-slate-300"
+            >
               از تاریخ
             </label>
+
             <input
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
               id="fromDate"
               type="date"
-              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100"
             />
           </div>
 
           <div className="flex flex-col gap-2 text-sm">
-            <label htmlFor="toDate" className="text-gray-700">
+            <label
+              htmlFor="toDate"
+              className="text-gray-700 dark:text-slate-300"
+            >
               تا تاریخ
             </label>
+
             <input
               value={toDate}
               id="toDate"
               onChange={(e) => setToDate(e.target.value)}
               type="date"
-              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 rounded-lg border border-gray-200 bg-gray-50 px-3 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100"
             />
           </div>
 
@@ -243,7 +267,7 @@ export default function Sales() {
               setFromDate("");
               setToDate("");
             }}
-            className="flex h-10 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 text-sm text-gray-600 transition hover:border-blue-400 hover:text-blue-600"
+            className="flex h-10 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 text-sm text-gray-600 transition hover:border-indigo-400 hover:text-indigo-600 dark:border-[#2A3548] dark:text-slate-300 dark:hover:border-indigo-500 dark:hover:text-indigo-400"
           >
             <FcClearFilters size={20} />
             پاک کردن تاریخ‌ها
@@ -256,34 +280,22 @@ export default function Sales() {
             name=""
             id=""
             placeholder="جستجو نام مشتری یا عنوان محصول ..."
-            className="
-                w-full
-                h-10
-                pr-10
-                pl-4
-                rounded-lg
-                bg-gray-50
-                border
-                border-gray-200
-                outline-none
-                focus:ring-2
-                focus:ring-blue-500
-              "
+            className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 pr-3 pl-4 text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-[#2A3548] dark:bg-[#0B1120] dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
       </div>
 
       {/* Sales table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-[#2A3548] dark:bg-[#172033]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-212.5 text-right">
-            <thead className="border-b border-gray-200 bg-gray-50">
+            <thead className="border-b border-gray-200 bg-gray-50 dark:border-[#2A3548] dark:bg-[#111827]">
               <tr>
                 {["مشتری", "عنوان معامله", "مبلغ", "وضعیت", "تاریخ"].map(
                   (title) => (
                     <th
                       key={title}
-                      className="px-5 py-4 text-sm font-medium text-gray-500"
+                      className="px-5 py-4 text-sm font-medium text-gray-500 dark:text-slate-400"
                     >
                       {title}
                     </th>
@@ -297,29 +309,29 @@ export default function Sales() {
                 sales.map((sale) => (
                   <tr
                     key={sale.documentId}
-                    className="border-b border-gray-100 transition last:border-0 hover:bg-gray-50"
+                    className="border-b border-gray-100 transition last:border-0 hover:bg-gray-50 dark:border-[#2A3548] dark:hover:bg-[#243247]"
                   >
-                    <td className="px-5 py-4 font-medium text-gray-800">
+                    <td className="px-5 py-4 font-medium text-gray-800 dark:text-slate-100">
                       {sale.customer?.name || "—"}
                     </td>
 
-                    <td className="px-5 py-4 text-gray-600">
+                    <td className="px-5 py-4 text-gray-600 dark:text-slate-300">
                       {sale.title || "—"}
                     </td>
 
-                    <td className="whitespace-nowrap px-5 py-4 text-gray-700">
+                    <td className="whitespace-nowrap px-5 py-4 text-gray-700 dark:text-slate-200">
                       {formatPrice(sale.amount)}
                     </td>
 
                     <td className="px-5 py-4">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium  ${statusStyles[sale.stage]}`}
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${statusStyles[sale.stage]}`}
                       >
                         {statusTranslate[sale.stage]}
                       </span>
                     </td>
 
-                    <td className="whitespace-nowrap px-5 py-4 text-gray-500">
+                    <td className="whitespace-nowrap px-5 py-4 text-gray-500 dark:text-slate-400">
                       {sale.closedAt || "—"}
                     </td>
                   </tr>
@@ -328,7 +340,7 @@ export default function Sales() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-sm text-gray-500"
+                    className="px-5 py-10 text-center text-sm text-gray-500 dark:text-slate-400"
                   >
                     هنوز فروش موفقی ثبت نشده است.
                   </td>
@@ -338,6 +350,7 @@ export default function Sales() {
           </table>
         </div>
       </div>
+
       {showSaleModal && (
         <SaleFormModal
           customers={customers}

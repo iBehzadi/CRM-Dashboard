@@ -19,10 +19,13 @@ const statusTranslate = {
   converted: "تبدیل‌شده",
 };
 const statusStyles = {
-  new: "bg-blue-50 text-blue-600",
-  following: "bg-yellow-50 text-yellow-600",
-  negotiation: "bg-purple-50 text-purple-600",
-  converted: "bg-green-50 text-green-600",
+  new: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
+  following:
+    "bg-yellow-50 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400",
+  negotiation:
+    "bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400",
+  converted:
+    "bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400",
 };
 const statusBar = {
   new: "bg-blue-500",
@@ -33,9 +36,10 @@ const statusBar = {
 
 const priorityTranslate = { low: "کم", medium: "متوسط", high: "بالا" };
 const priorityStyles = {
-  low: "bg-gray-50 text-gray-600",
-  medium: "bg-yellow-50 text-yellow-600",
-  high: "bg-red-50 text-red-600",
+  low: "bg-gray-50 text-gray-600 dark:bg-gray-500/10 dark:text-gray-400",
+  medium:
+    "bg-yellow-50 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400",
+  high: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
 };
 
 const typeTranslate = {
@@ -52,16 +56,15 @@ const toISO = (d) =>
     d.getDate(),
   ).padStart(2, "0")}`;
 
-
 const formatDate = (d) =>
   d ? new Date(`${d.slice(0, 10)}T00:00:00`).toLocaleDateString("fa-IR") : "-";
 
 const num = (n) => n.toLocaleString("fa-IR");
 
 const Card = ({ title, action, children }) => (
-  <div className="bg-white rounded-xl border border-gray-200 p-5">
+  <div className="bg-white rounded-xl border border-gray-200 p-5 dark:bg-[#172033] dark:border-[#2A3548]">
     <div className="flex items-center justify-between mb-5">
-      <h2 className="font-bold text-gray-800">{title}</h2>
+      <h2 className="font-bold text-gray-800 dark:text-[#F1F5F9]">{title}</h2>
       {action}
     </div>
     {children}
@@ -69,7 +72,9 @@ const Card = ({ title, action, children }) => (
 );
 
 const Empty = ({ text }) => (
-  <p className="py-6 text-center text-sm text-gray-400">{text}</p>
+  <p className="py-6 text-center text-sm text-gray-400 dark:text-[#94A3B8]">
+    {text}
+  </p>
 );
 
 const Dashboard = () => {
@@ -81,9 +86,10 @@ const Dashboard = () => {
   const updateTask = useTaskStore((state) => state.updateTask);
   const activities = useActivityStore((state) => state.activities);
   const fetchActivities = useActivityStore((state) => state.fetchActivities);
+  const fetchLeads = useLeadStore((state) => state.fetchLeads);
 
   useEffect(() => {
-    // سرنخ‌ها را App.jsx قبلاً می‌خواند
+    fetchLeads();
     fetchCustomers({ silent: true });
     fetchTasks({ silent: true });
     fetchActivities();
@@ -141,7 +147,9 @@ const Dashboard = () => {
     {
       title: "وظایف باز",
       value: num(data.openCount),
-      hint: data.overdueCount ? `${num(data.overdueCount)} مورد عقب‌افتاده` : "",
+      hint: data.overdueCount
+        ? `${num(data.overdueCount)} مورد عقب‌افتاده`
+        : "",
       icon: FiCheckSquare,
     },
     {
@@ -159,8 +167,10 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">داشبورد</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
+          داشبورد
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-[#94A3B8]">
           خلاصه‌ای از وضعیت فروش و فعالیت‌های شما
         </p>
       </div>
@@ -172,18 +182,22 @@ const Dashboard = () => {
           return (
             <div
               key={item.title}
-              className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between"
+              className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between dark:bg-[#172033] dark:border-[#2A3548]"
             >
               <div>
-                <p className="text-sm text-gray-500">{item.title}</p>
-                <p className="mt-2 text-2xl font-bold text-gray-800">
+                <p className="text-sm text-gray-500 dark:text-[#94A3B8]">
+                  {item.title}
+                </p>
+                <p className="mt-2 text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
                   {item.value}
                 </p>
                 {item.hint && (
-                  <p className="mt-1 text-xs text-red-500">{item.hint}</p>
+                  <p className="mt-1 text-xs text-red-500 dark:text-red-400">
+                    {item.hint}
+                  </p>
                 )}
               </div>
-              <div className="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center">
                 <Icon size={22} />
               </div>
             </div>
@@ -196,7 +210,10 @@ const Dashboard = () => {
         <Card
           title="وظایف امروز و عقب‌افتاده"
           action={
-            <Link to="/tasks" className="text-sm text-blue-600 hover:underline">
+            <Link
+              to="/tasks"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
               همه وظایف
             </Link>
           }
@@ -210,15 +227,17 @@ const Dashboard = () => {
                 return (
                   <div
                     key={task.documentId}
-                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50"
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50 dark:bg-[#0B1120]"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-gray-800 truncate">
+                      <p className="font-medium text-gray-800 dark:text-[#F1F5F9] truncate">
                         {task.title}
                       </p>
                       <p
                         className={`mt-1 text-xs ${
-                          overdue ? "text-red-600" : "text-gray-500"
+                          overdue
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-gray-500 dark:text-[#94A3B8]"
                         }`}
                       >
                         {overdue ? "عقب‌افتاده: " : "امروز: "}
@@ -238,7 +257,7 @@ const Dashboard = () => {
                         type="button"
                         title="انجام شد"
                         onClick={() => handleDone(task)}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-50 text-green-600 border border-green-100 hover:bg-green-600 hover:text-white transition"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-50 text-green-600 border border-green-100 hover:bg-green-600 hover:text-white transition dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20 dark:hover:bg-green-600 dark:hover:text-white"
                       >
                         <FiCheck size={16} />
                       </button>
@@ -262,14 +281,14 @@ const Dashboard = () => {
                 return (
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1.5 text-sm">
-                      <span className="text-gray-600">
+                      <span className="text-gray-600 dark:text-[#94A3B8]">
                         {statusTranslate[key]}
                       </span>
-                      <span className="text-gray-800 font-medium">
+                      <span className="text-gray-800 dark:text-[#F1F5F9] font-medium">
                         {num(count)}
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="h-2 rounded-full bg-gray-100 dark:bg-[#0B1120] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${statusBar[key]}`}
                         style={{ width: `${percent}%` }}
@@ -286,7 +305,10 @@ const Dashboard = () => {
         <Card
           title="آخرین سرنخ‌ها"
           action={
-            <Link to="/leads" className="text-sm text-blue-600 hover:underline">
+            <Link
+              to="/leads"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
               همه سرنخ‌ها
             </Link>
           }
@@ -299,19 +321,20 @@ const Dashboard = () => {
                 <Link
                   key={lead.documentId}
                   to={`/leads/${lead.documentId}`}
-                  className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
+                  className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition dark:bg-[#0B1120] dark:hover:bg-[#243247]"
                 >
                   <div className="min-w-0">
-                    <p className="font-medium text-gray-800 truncate">
+                    <p className="font-medium text-gray-800 dark:text-[#F1F5F9] truncate">
                       {lead.name}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
                       {formatDate(lead.createdAt)}
                     </p>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs shrink-0 ${
-                      statusStyles[lead.leadStatus] || "bg-gray-50 text-gray-600"
+                      statusStyles[lead.leadStatus] ||
+                      "bg-gray-50 text-gray-600 dark:bg-gray-500/10 dark:text-gray-400"
                     }`}
                   >
                     {statusTranslate[lead.leadStatus] || "-"}
@@ -331,18 +354,18 @@ const Dashboard = () => {
               {data.recentActivities.map((activity) => (
                 <div
                   key={activity.documentId}
-                  className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50"
+                  className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50 dark:bg-[#0B1120]"
                 >
                   <div className="min-w-0">
-                    <p className="font-medium text-gray-800 truncate">
+                    <p className="font-medium text-gray-800 dark:text-[#F1F5F9] truncate">
                       {activity.title}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
                       {activity.lead?.name ? `${activity.lead.name} • ` : ""}
                       {formatDate(activity.date)}
                     </p>
                   </div>
-                  <span className="px-3 py-1 rounded-full text-xs shrink-0 bg-blue-50 text-blue-600">
+                  <span className="px-3 py-1 rounded-full text-xs shrink-0 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                     {typeTranslate[activity.type] || "-"}
                   </span>
                 </div>

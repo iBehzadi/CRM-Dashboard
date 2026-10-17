@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "./Routes/router";
 import { Toaster } from "react-hot-toast";
-import useLeadStore from "./Store/leadStore";
+import useThemeStore from "./Store/themeStore";
 
 export default function App() {
-  const fetchLeads = useLeadStore((state) => state.fetchLeads);
+  const theme = useThemeStore((state) => state.theme);
 
   useEffect(() => {
-    fetchLeads();
-  }, [fetchLeads]);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   return (
     <>

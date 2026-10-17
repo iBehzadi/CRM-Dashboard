@@ -15,13 +15,16 @@ export default function Activities() {
 
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
+
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [relationFilter, setRelationFilter] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [editingAct, setEditingAct] = useState(null);
+
   const inputClass =
-    "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500";
+    "w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none focus:ring-2 focus:ring-blue-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]";
+
   const handleActEdit = (act) => {
     setEditingAct(act);
     formik.setValues({
@@ -30,7 +33,6 @@ export default function Activities() {
       date: act.date,
       type: act.type,
       lead: act.lead?.documentId || "",
-      // customer: act.customer?.documentId || "",
     });
 
     setShowModal(true);
@@ -43,34 +45,33 @@ export default function Activities() {
       description: "",
       date: "",
       lead: "",
-      // customer: "",
     },
 
     validationSchema: Yup.object({
       type: Yup.string().required("نوع فعالیت را انتخاب کنید"),
       title: Yup.string().required("عنوان الزامی است"),
       date: Yup.string().required("تاریخ الزامی است"),
-      lead : Yup.string().required('سرنخ الزامی است')
+      lead: Yup.string().required("سرنخ الزامی است"),
     }),
 
     onSubmit: async (values) => {
       const payload = {
         ...values,
         lead: values.lead || null,
-        // customer: values.customer || null,
       };
+
       try {
         if (editingAct) {
           const res = await updateActivity(editingAct.documentId, payload);
+
           if (res === null) return;
           closeModal();
         } else {
           const res = await addActivity(payload);
-          console.log(res);
+
           if (res === null) return;
           closeModal();
         }
-        closeModal();
       } catch (error) {
         console.log(error.message);
       }
@@ -87,6 +88,7 @@ export default function Activities() {
     fetchActivities();
     fetchCustomers();
   }, []);
+
   const activityTypes = [
     { value: "call", label: "تماس تلفنی" },
     { value: "text", label: "پیام" },
@@ -97,12 +99,14 @@ export default function Activities() {
   ];
 
   const typeStyles = {
-    call: "bg-emerald-50 text-emerald-600",
-    text: "bg-sky-50 text-sky-600",
-    email: "bg-violet-50 text-violet-600",
-    meet: "bg-blue-50 text-blue-600",
-    note: "bg-gray-100 text-gray-600",
-    following: "bg-purple-50 text-purple-600",
+    call: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300",
+    text: "bg-sky-50 text-sky-600 dark:bg-sky-950 dark:text-sky-300",
+    email:
+      "bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300",
+    meet: "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300",
+    note: "bg-gray-100 text-gray-600 dark:bg-[#243247] dark:text-[#CBD5E1]",
+    following:
+      "bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-300",
   };
 
   const filteredActivities = activities.filter((act) => {
@@ -123,13 +127,16 @@ export default function Activities() {
 
     return matchesSearch && matchesType && matchesRelation;
   });
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">فعالیت‌ها</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-[#F1F5F9]">
+            فعالیت‌ها
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-[#94A3B8]">
             مدیریت فعالیت‌های فروش و تعاملات با مشتریان
           </p>
         </div>
@@ -144,10 +151,10 @@ export default function Activities() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
+            <label className="block text-sm font-medium text-gray-600 dark:text-[#CBD5E1] mb-2">
               جستجو
             </label>
             <input
@@ -160,7 +167,7 @@ export default function Activities() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
+            <label className="block text-sm font-medium text-gray-600 dark:text-[#CBD5E1] mb-2">
               نوع فعالیت
             </label>
             <select
@@ -176,26 +183,10 @@ export default function Activities() {
               ))}
             </select>
           </div>
-
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              مرتبط با
-            </label>
-            <select
-              value={relationFilter}
-              onChange={(e) => setRelationFilter(e.target.value)}
-              className={inputClass}
-            >
-              <option value="all">همه</option>
-              <option value="lead">سرنخ</option>
-              <option value="customer">مشتری</option>
-              <option value="general">عمومی</option>
-            </select>
-          </div> */}
         </div>
 
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-          <span className="text-sm text-gray-500">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-[#2A3548]">
+          <span className="text-sm text-gray-500 dark:text-[#94A3B8]">
             تعداد فعالیت‌ها: {filteredActivities.length}
           </span>
 
@@ -206,7 +197,7 @@ export default function Activities() {
               setTypeFilter("all");
               setRelationFilter("all");
             }}
-            className="text-sm text-indigo-600 hover:text-indigo-800"
+            className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-[#818CF8] dark:hover:text-indigo-300"
           >
             پاک کردن فیلترها
           </button>
@@ -214,11 +205,11 @@ export default function Activities() {
       </div>
 
       {/* Activities Table */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-[#172033] dark:border-[#2A3548]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-212.5 text-right">
+          <table className="w-full min-w-[850px] text-right">
             <thead>
-              <tr className="bg-gray-50/80 text-gray-700 text-sm border-b border-gray-200">
+              <tr className="bg-gray-50/80 text-gray-700 text-sm border-b border-gray-200 dark:bg-[#111827] dark:text-[#F1F5F9] dark:border-[#2A3548]">
                 <th className="px-5 py-4 font-semibold">#</th>
                 <th className="px-5 py-4 font-semibold">عنوان</th>
                 <th className="px-5 py-4 font-semibold">نوع فعالیت</th>
@@ -229,19 +220,19 @@ export default function Activities() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-[#2A3548]">
               {filteredActivities.length > 0 ? (
                 filteredActivities.map((act, index) => (
                   <tr
                     key={act.documentId || act.id}
-                    className="hover:bg-gray-50/70 transition-colors"
+                    className="hover:bg-gray-50/70 dark:hover:bg-[#243247] transition-colors"
                   >
-                    <td className="px-5 py-4 text-sm text-gray-500">
+                    <td className="px-5 py-4 text-sm text-gray-500 dark:text-[#94A3B8]">
                       {index + 1}
                     </td>
 
                     <td className="px-5 py-4">
-                      <span className="font-medium text-gray-800">
+                      <span className="font-medium text-gray-800 dark:text-[#F1F5F9]">
                         {act.title}
                       </span>
                     </td>
@@ -249,7 +240,8 @@ export default function Activities() {
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex items-center rounded-lg px-3 py-2 text-sm font-medium ${
-                          typeStyles[act.type] || "bg-gray-100 text-gray-600"
+                          typeStyles[act.type] ||
+                          "bg-gray-100 text-gray-600 dark:bg-[#243247] dark:text-[#CBD5E1]"
                         }`}
                       >
                         {activityTypes.find((type) => type.value === act.type)
@@ -257,21 +249,23 @@ export default function Activities() {
                       </span>
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-gray-600">
+                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-[#CBD5E1]">
                       {act.lead ? (
                         <span>سرنخ: {act.lead.name}</span>
                       ) : act.customer ? (
                         <span>مشتری: {act.customer.name}</span>
                       ) : (
-                        <span className="text-gray-400">عمومی</span>
+                        <span className="text-gray-400 dark:text-[#64748B]">
+                          عمومی
+                        </span>
                       )}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-[#CBD5E1] whitespace-nowrap">
                       {act.date || "—"}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-gray-500 max-w-xs">
+                    <td className="px-5 py-4 text-sm text-gray-500 dark:text-[#94A3B8] max-w-xs">
                       <p className="truncate">{act.description || "—"}</p>
                     </td>
 
@@ -280,7 +274,7 @@ export default function Activities() {
                         <button
                           type="button"
                           onClick={() => handleActEdit(act)}
-                          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition text-sm"
+                          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition text-sm dark:border-[#2A3548] dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
                         >
                           ویرایش
                         </button>
@@ -292,7 +286,7 @@ export default function Activities() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-12 text-center text-gray-500"
+                    className="px-5 py-12 text-center text-gray-500 dark:text-[#94A3B8]"
                   >
                     فعالیتی با این مشخصات پیدا نشد.
                   </td>
@@ -302,26 +296,28 @@ export default function Activities() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-t border-gray-100">
-          <span className="text-sm text-gray-500">
+        <div className="flex items-center justify-between gap-3 px-5 py-4 border-t border-gray-100 dark:border-[#2A3548]">
+          <span className="text-sm text-gray-500 dark:text-[#94A3B8]">
             نمایش {filteredActivities.length} فعالیت
           </span>
         </div>
       </div>
 
-      {/* Modal: keep your existing modal here */}
+      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           {/* Overlay */}
           <div onClick={closeModal} className="absolute inset-0 bg-black/40" />
 
           {/* Modal */}
-          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl dark:bg-[#172033]">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-blue-400">
+            <div className="flex items-center justify-between p-5 border-b border-blue-400 dark:border-[#2A3548]">
               <div>
-                <h2>{editingAct ? "ویرایش فعالیت" : "افزودن فعالیت"}</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="font-semibold text-gray-800 dark:text-[#F1F5F9]">
+                  {editingAct ? "ویرایش فعالیت" : "افزودن فعالیت"}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-[#94A3B8] mt-1">
                   فعالیت های مرتبط با مشتری را وارد کنید
                 </p>
               </div>
@@ -329,7 +325,7 @@ export default function Activities() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-[#94A3B8] dark:hover:bg-[#243247]"
               >
                 <FiX size={20} />
               </button>
@@ -339,7 +335,7 @@ export default function Activities() {
             <form onSubmit={formik.handleSubmit} className="p-5 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     عنوان فعالیت <span className="text-red-400">*</span>
                   </label>
 
@@ -349,8 +345,8 @@ export default function Activities() {
                     value={formik.values.title}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder="مثلاً تماس مجدد "
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="مثلاً تماس مجدد"
+                    className={inputClass}
                   />
 
                   {formik.touched.title && formik.errors.title && (
@@ -361,7 +357,7 @@ export default function Activities() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     نوع فعالیت <span className="text-red-400">*</span>
                   </label>
 
@@ -370,7 +366,7 @@ export default function Activities() {
                     value={formik.values.type}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   >
                     <option value="">-</option>
                     <option value="call">تماس تلفنی</option>
@@ -389,7 +385,7 @@ export default function Activities() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     تاریخ <span className="text-red-400">*</span>
                   </label>
 
@@ -399,7 +395,7 @@ export default function Activities() {
                     value={formik.values.date}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500"
+                    className={inputClass}
                   />
 
                   {formik.touched.date && formik.errors.date && (
@@ -409,15 +405,18 @@ export default function Activities() {
                   )}
                 </div>
               </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                     سرنخ مرتبط
                   </label>
+
                   <select
                     name="lead"
                     value={formik.values.lead}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     className={inputClass}
                   >
                     <option value="">بدون سرنخ</option>
@@ -427,37 +426,17 @@ export default function Activities() {
                       </option>
                     ))}
                   </select>
+
                   {formik.touched.lead && formik.errors.lead && (
                     <p className="mt-1 text-xs text-red-500">
                       {formik.errors.lead}
                     </p>
                   )}
                 </div>
-
-                {/* <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    مشتری مرتبط
-                  </label>
-                  <select
-                    name="customer"
-                    value={formik.values.customer}
-                    onChange={formik.handleChange}
-                    className={inputClass}
-                  >
-                    <option value="">بدون مشتری</option>
-                    {customers.map((customer) => (
-                      <option
-                        key={customer.documentId}
-                        value={customer.documentId}
-                      >
-                        {customer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-[#CBD5E1] mb-2">
                   توضیحات
                 </label>
 
@@ -468,14 +447,15 @@ export default function Activities() {
                   onBlur={formik.handleBlur}
                   rows="3"
                   placeholder="توضیحات مربوط به این فعالیت ..."
-                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-800 outline-none resize-none focus:ring-2 focus:ring-blue-500 dark:border-[#2A3548] dark:bg-[#111827] dark:text-[#F1F5F9] dark:placeholder:text-[#64748B]"
                 />
               </div>
-              <div className="flex justify-end gap-3 p-5 border-t border-blue-400">
+
+              <div className="flex justify-end gap-3 p-5 border-t border-blue-400 dark:border-[#2A3548]">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-[#2A3548] dark:text-[#CBD5E1] dark:hover:bg-[#243247]"
                 >
                   انصراف
                 </button>
