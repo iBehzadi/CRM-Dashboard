@@ -130,7 +130,7 @@ The frontend talks to a REST API that follows **Strapi v5 conventions** (`docume
 ## Author
 
 **Your Name**
-[LinkedIn](https://linkedin.com/in/your-profile) · [Email](mailto:you@example.com) · [Portfolio](https://your-site.com)
+[LinkedIn](https://www.linkedin.com/in/ibehzadi) · [Email](mailto:bsd098@gmail.com) · [Portfolio](https://behzad-net.ir)
 
 ## License
 
