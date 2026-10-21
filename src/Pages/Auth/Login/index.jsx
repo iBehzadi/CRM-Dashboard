@@ -40,6 +40,7 @@ export default function Login({ handlePage }) {
             identifier: formik.values.email,
             password: formik.values.password,
           }),
+          skipAuth: true,
         });
 
         if (data.jwt) {

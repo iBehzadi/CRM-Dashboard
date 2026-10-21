@@ -12,8 +12,7 @@ export default function Activities() {
   const addActivity = useActivityStore((state) => state.addActivity);
   const updateActivity = useActivityStore((state) => state.updateActivity);
   const leads = useLeadStore((state) => state.leads);
-
-  const customers = useCustomerStore((state) => state.customers);
+  const fetchLeads = useLeadStore((state) => state.fetchLeads);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
 
   const [search, setSearch] = useState("");
@@ -85,6 +84,7 @@ export default function Activities() {
   };
 
   useEffect(() => {
+    fetchLeads();
     fetchActivities();
     fetchCustomers();
   }, []);
