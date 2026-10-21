@@ -2,6 +2,7 @@ import { create } from "zustand";
 import notify from "../Utils/notify";
 import fetchData from "../Utils/fetchData";
 import useCustomerStore from "./customerStore";
+import { isSamePhone } from "../Utils/phoneValidation";
 
 const useLeadStore = create((set, get) => ({
   leads: [],
@@ -15,7 +16,7 @@ const useLeadStore = create((set, get) => ({
       }
       const customerExists = useCustomerStore
         .getState()
-        .customers.some((c) => c.phone === lead.phone);
+        .customers.some((c) => isSamePhone(c.phone, lead.phone));
       if (customerExists) {
         //page size is 100 if there are more than 100 customers, this check might not be accurate -- repair this if needed
         notify("error", "سرنخ با این شماره موبایل قبلاً در مشتریان وجود دارد");

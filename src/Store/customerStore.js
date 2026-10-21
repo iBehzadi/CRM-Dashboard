@@ -2,6 +2,7 @@ import { create } from "zustand";
 import fetchData from "../Utils/fetchData";
 import notify from "../Utils/notify";
 import useLeadStore from "./leadStore";
+import { isSamePhone } from "../Utils/phoneValidation";
 
 const useCustomerStore = create((set, get) => ({
   customers: [],
@@ -23,7 +24,7 @@ const useCustomerStore = create((set, get) => ({
   },
   //create customer
   createCustomer: async (customer) => {
-    const exist = get().customers.some((c) => c.phone === customer.phone);
+    const exist = get().customers.some((c) => isSamePhone(c.phone, customer.phone));
     if (exist) {
       notify("error", "مشتری با این شماره تماس قبلاً وجود دارد");
       return null;

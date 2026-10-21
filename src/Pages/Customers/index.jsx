@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -6,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiX, FiUsers } from "react-icons/fi";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import useCustomerStore from "../../Store/customerStore";
+import { isValidMobile, normalizePhone } from "../../Utils/phoneValidation";
 
 const sourceTranslate = {
   instagram: "اینستاگرام",
@@ -47,7 +47,9 @@ const Customers = () => {
     },
     validationSchema: Yup.object({
       name: Yup.string().trim().required("نام و نام خانوادگی الزامی است"),
-      phone: Yup.string().trim().required("شماره تماس الزامی است"),
+      phone: Yup.string()
+        .required("شماره موبایل الزامی است")
+        .test("mobile", "شماره موبایل معتبر نیست", (v) => isValidMobile(v)),
       email: Yup.string().email("ایمیل معتبر نیست"),
       source: Yup.string().required("منبع را انتخاب کنید"),
     }),
@@ -56,12 +58,13 @@ const Customers = () => {
         if (editingCustomer) {
           const result = await updateCustomer(
             editingCustomer.documentId,
-            values
+            values,
           );
           if (result === null) return;
           closeModal();
         } else {
-          const created = await createCustomer(values);
+          const payload = { ...values, phone: normalizePhone(values.phone) };
+          const created = await createCustomer(payload);
           if (!created) return;
           closeModal();
         }
@@ -100,8 +103,7 @@ const Customers = () => {
       (c.phone || "").includes(q) ||
       (c.email || "").includes(q);
 
-    const matchesSource =
-      sourceFilter === "all" || c.source === sourceFilter;
+    const matchesSource = sourceFilter === "all" || c.source === sourceFilter;
 
     return matchesSearch && matchesSource;
   });
@@ -174,7 +176,7 @@ const Customers = () => {
                     >
                       {title}
                     </th>
-                  )
+                  ),
                 )}
               </tr>
             </thead>

@@ -7,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import useLeadStore from "../../Store/leadStore";
 import notify from "../../Utils/notify";
+import { isValidMobile, normalizePhone } from "../../Utils/phoneValidation";
 
 const statusStyles = {
   new: "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300",
@@ -60,7 +61,9 @@ const Leads = () => {
 
     validationSchema: Yup.object({
       name: Yup.string().required("نام و نام خانوادگی الزامی است"),
-      phone: Yup.string().required("شماره تماس الزامی است"),
+      phone: Yup.string()
+        .required("شماره موبایل الزامی است")
+        .test("mobile", "شماره موبایل معتبر نیست", (v) => isValidMobile(v)),
       date: Yup.date().required("تاریخ را مشخص کنید"),
       email: Yup.string().email("ایمیل معتبر نیست"),
       source: Yup.string().required("منبع سرنخ را انتخاب کنید"),
@@ -74,7 +77,8 @@ const Leads = () => {
           if (result === null) return;
           closeModal();
         } else {
-          const created = await createLead(values);
+          const payload = { ...values, phone: normalizePhone(values.phone) };
+          const created = await createLead(payload);
           if (!created) return;
           closeModal();
         }
@@ -130,7 +134,7 @@ const Leads = () => {
 
   useEffect(() => {
     fetchLeads();
-  },[fetchLeads]);
+  }, [fetchLeads]);
   return (
     <div className="space-y-6">
       {/* Header */}
