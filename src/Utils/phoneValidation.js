@@ -1,16 +1,15 @@
 const FA = "۰۱۲۳۴۵۶۷۸۹";
 const AR = "٠١٢٣٤٥٦٧٨٩";
 
-// ارقام فارسی و عربی -> لاتین
+// convert persian and arabic digits to english digits
 export const toEnglishDigits = (value) =>
   String(value ?? "")
     .replace(/[۰-۹]/g, (d) => FA.indexOf(d))
     .replace(/[٠-٩]/g, (d) => AR.indexOf(d));
 
-// شماره موبایل ایران را به شکل استاندارد 09xxxxxxxxx برمی‌گرداند.
-// اگر شماره موبایل معتبر نباشد، رشته خالی برمی‌گرداند.
+// 09xxxxxxxx -> 0912xxxxxxx
 export const normalizePhone = (input) => {
-  // فقط رقم‌ها (فاصله، خط تیره، پرانتز و + حذف می‌شن)
+  // remove all non-digit characters
   let p = toEnglishDigits(input).replace(/\D/g, "");
 
   if (p.startsWith("0098")) p = p.slice(4);
@@ -24,7 +23,7 @@ export const normalizePhone = (input) => {
 
 export const isValidMobile = (input) => normalizePhone(input) !== "";
 
-// مقایسه دو شماره (برای چک تکراری بودن)
+// check if two phone numbers are the same
 export const isSamePhone = (a, b) => {
   const x = normalizePhone(a);
   return x !== "" && x === normalizePhone(b);

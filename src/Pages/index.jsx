@@ -8,6 +8,7 @@ import Settings from "./Settings";
 import Activities from "./Activities";
 import Auth from "./Auth";
 import NotFound from "./NotFound";
+import Profile from "./Profile";
 export {
   Leads,
   Dashboard,
@@ -19,4 +20,5 @@ export {
   Activities,
   Auth,
   NotFound,
+  Profile
 };

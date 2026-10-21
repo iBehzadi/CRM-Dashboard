@@ -3,13 +3,16 @@ import notify from "../Utils/notify";
 import fetchData from "../Utils/fetchData";
 import useCustomerStore from "./customerStore";
 import { isSamePhone } from "../Utils/phoneValidation";
-
+const cleanLead = (c) => ({
+  ...c,
+  email: c.email?.trim() ? c.email.trim() : null,
+});
 const useLeadStore = create((set, get) => ({
   leads: [],
   //create lead
   createLead: async (lead) => {
     try {
-      const exist = get().leads.some((l) => l.phone === lead.phone);
+      const exist = get().leads.some((l) => isSamePhone(l.phone , lead.phone) );
       if (exist) {
         notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
         return null;
@@ -25,7 +28,7 @@ const useLeadStore = create((set, get) => ({
       const res = await fetchData("leads", {
         method: "POST",
         body: JSON.stringify({
-          data: lead,
+          data: cleanLead(lead) ,
         }),
       });
 
@@ -65,7 +68,7 @@ const useLeadStore = create((set, get) => ({
   updateLead: async (documentId, updatedLead) => {
     const exist = get().leads.some(
       (lead) =>
-        lead.documentId !== documentId && lead.phone === updatedLead.phone,
+        lead.documentId !== documentId && isSamePhone(lead.phone , updatedLead.phone) ,
     );
     if (exist) {
       notify("error", "سرنخ با این شماره موبایل قبلاً وجود دارد");
@@ -74,13 +77,13 @@ const useLeadStore = create((set, get) => ({
     await fetchData(`leads/${documentId}`, {
       method: "PUT",
       body: JSON.stringify({
-        data: updatedLead,
+        data: cleanLead(updatedLead),
       }),
     });
     notify("success", "سرنخ به‌روزرسانی شد");
     set((state) => ({
       leads: state.leads.map((lead) =>
-        lead.documentId === documentId ? { ...lead, ...updatedLead } : lead,
+        lead.documentId === documentId ? { ...lead, ...cleanLead(updatedLead) } : lead,
       ),
     }));
   },

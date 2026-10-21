@@ -11,6 +11,7 @@ import {
   Settings,
   Auth,
   NotFound,
+  Profile,
 } from "../Pages";
 import LeadDetails from "../Pages/Leads/LeadDetails";
 import ProtectedRoute from "../Components/ProtectedRoute";
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
           {
             path: "settings",
             element: <Settings />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
           },
         ],
       },

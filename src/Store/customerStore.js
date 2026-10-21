@@ -3,7 +3,10 @@ import fetchData from "../Utils/fetchData";
 import notify from "../Utils/notify";
 import useLeadStore from "./leadStore";
 import { isSamePhone } from "../Utils/phoneValidation";
-
+const cleanCustomer = (c) => ({
+  ...c,
+  email: c.email?.trim() ? c.email.trim() : null,
+});
 const useCustomerStore = create((set, get) => ({
   customers: [],
   loading: false,
@@ -24,14 +27,16 @@ const useCustomerStore = create((set, get) => ({
   },
   //create customer
   createCustomer: async (customer) => {
-    const exist = get().customers.some((c) => isSamePhone(c.phone, customer.phone));
+    const exist = get().customers.some((c) =>
+      isSamePhone(c.phone, customer.phone),
+    );
     if (exist) {
       notify("error", "مشتری با این شماره تماس قبلاً وجود دارد");
       return null;
     }
     const res = await fetchData("customers", {
       method: "POST",
-      body: JSON.stringify({ data: customer }),
+      body: JSON.stringify({ data: cleanCustomer(customer) }),
     });
 
     await get().fetchCustomers({ silent: true });
@@ -51,11 +56,11 @@ const useCustomerStore = create((set, get) => ({
     }
     await fetchData(`customers/${documentId}`, {
       method: "PUT",
-      body: JSON.stringify({ data: updatedCustomer }),
+      body: JSON.stringify({ data: cleanCustomer(updatedCustomer) }),
     });
     set((state) => ({
       customers: state.customers.map((c) =>
-        c.documentId === documentId ? { ...c, ...updatedCustomer } : c,
+        c.documentId === documentId ? { ...c, ...cleanCustomer(updatedCustomer) } : c,
       ),
     }));
     notify("success", "مشتری به‌روزرسانی شد");
@@ -85,14 +90,14 @@ const useCustomerStore = create((set, get) => ({
     const res = await fetchData("customers", {
       method: "POST",
       body: JSON.stringify({
-        data: {
+        data: cleanCustomer({
           name: lead.name,
           phone: lead.phone,
           email: lead.email || "",
           source: lead.source,
           description: lead.description || "",
           lead: lead.documentId,
-        },
+        }),
       }),
     });
 

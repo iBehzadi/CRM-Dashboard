@@ -28,7 +28,7 @@ export default function Login({ handlePage }) {
     },
 
     validationSchema: Yup.object({
-      email: Yup.string().email("ایمیل معتبر نیست"),
+      email: Yup.string().required('ایمیل الزامی').email("ایمیل معتبر نیست"),
       password: Yup.string().required("لطفا پسورد را وارد کنید"),
     }),
 
@@ -97,7 +97,7 @@ export default function Login({ handlePage }) {
                 htmlFor="email"
                 className="mb-2 block text-sm font-semibold text-slate-700 dark:text-[#CBD5E1]"
               >
-                ایمیل یا نام کاربری
+                ایمیل
               </label>
 
               <div className={inputWrapperClass}>
