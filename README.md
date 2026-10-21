@@ -96,6 +96,7 @@ Create a `.env` file in the project root:
 VITE_BASE_URL=http://localhost:1337/api/
 VITE_BASE_FILE=http://localhost:1337/api/upload/
 ```
+* For backend files call with me!
 
 | Variable | Description |
 | --- | --- |
